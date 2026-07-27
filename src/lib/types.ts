@@ -4,14 +4,15 @@ export type Scene = {
   narration: string;
   image_prompt: string;
   image_url?: string;
-  video_url?: string;
-  video_poster?: string;
-  video_alt_urls?: string[];
-  ai_video_url?: string;
+  video_url?: string;       // stock video URL (Pexels)
+  video_poster?: string;    // poster image for the video
+  video_alt_urls?: string[]; // alternative stock video URLs to try if primary fails
+  ai_video_url?: string;     // AI-generated video clip (Pollinations Video API)
   ai_video_status?: 'idle' | 'generating' | 'ready' | 'failed';
-  duration: number;
+  mediaError?: string;       // set when this scene's media failed to load
+  duration: number; // seconds
   mood?: SceneMood;
-  search_query?: string;
+  search_query?: string;    // AI-provided search query for stock video
 };
 
 export type MediaSource = 'auto' | 'stock' | 'ai' | 'ai-video';
@@ -30,17 +31,17 @@ export type SubtitleColor = 'white' | 'gold' | 'yellow';
 
 export type BrandConfig = {
   enabled: boolean;
-  primaryColor: string;
-  logoUrl?: string;
-  fontFamily: string;
-  watermarkText?: string;
+  primaryColor: string;    // hex color, e.g. "#3b82f6"
+  logoUrl?: string;         // optional logo URL
+  fontFamily: string;       // font family for subtitles/title
+  watermarkText?: string;   // small text in corner
 };
 
 export type EndCardConfig = {
   enabled: boolean;
   text: string;
-  duration: number;
-  fontColor: string;
+  duration: number; // seconds
+  fontColor: string; // 'gold' | 'white' | etc
 };
 
 export type ProjectSettings = {
