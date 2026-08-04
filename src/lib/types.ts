@@ -3,45 +3,64 @@ export type Scene = {
   name?: string;
   narration: string;
   image_prompt: string;
-  image_url?: string;
-  video_url?: string;       // stock video URL (Pexels)
-  video_poster?: string;    // poster image for the video
-  video_alt_urls?: string[]; // alternative stock video URLs to try if primary fails
-  ai_video_url?: string;     // AI-generated video clip (Pollinations Video API)
-  ai_video_status?: 'idle' | 'generating' | 'ready' | 'failed';
-  mediaError?: string;       // set when this scene's media failed to load
-  duration: number; // seconds
-  mood?: SceneMood;
-  search_query?: string;    // AI-provided search query for stock video
+  search_query?: string;
+  duration: number;
+  mood?: string;
 };
 
-export type MediaSource = 'auto' | 'stock' | 'ai' | 'ai-video';
-
-export type SceneMood = 'neutral' | 'calm' | 'dramatic' | 'happy' | 'tense' | 'mysterious';
-
-export type MusicStyle = 'none' | 'ambient' | 'cinematic' | 'uplifting' | 'lofi' | 'dramatic';
-export type TransitionType = 'fade' | 'slide' | 'zoom' | 'cut' | 'crossfade';
-export type TTSVoice = 'alloy' | 'nova' | 'shimmer' | 'echo' | 'onyx' | 'fable' | 'ash' | 'sage' | 'coral' | 'verse';
-export type TTSMode = 'browser' | 'pollinations';
-export type ExportFormat = 'webm' | 'mp4';
-export type ThumbnailStyle = 'bold' | 'minimal' | 'vintage' | 'neon' | 'documentary';
-
-export type SubtitleStyle = 'standard' | 'kinetic' | 'none';
-export type SubtitleColor = 'white' | 'gold' | 'yellow';
-
-export type BrandConfig = {
-  enabled: boolean;
-  primaryColor: string;    // hex color, e.g. "#3b82f6"
-  logoUrl?: string;         // optional logo URL
-  fontFamily: string;       // font family for subtitles/title
-  watermarkText?: string;   // small text in corner
+export type VideoProject = {
+  id: string;
+  title: string;
+  prompt: string;
+  status: 'draft' | 'ready' | 'published';
+  script: Scene[];
+  settings: ProjectSettings;
+  youtube_title: string | null;
+  youtube_description: string | null;
+  youtube_tags: string[] | null;
+  thumbnail_url: string | null;
+  thumbnail_style: ThumbnailStyle | null;
+  is_published: boolean;
+  published_at: string | null;
+  category?: string | null;
+  video_blob_url?: string | null;
+  created_at?: string;
+  updated_at?: string;
 };
+
+export type TTSVoice =
+  | 'nova' | 'shimmer' | 'coral' | 'sage'
+  | 'echo' | 'onyx' | 'ash' | 'fable' | 'verse' | 'alloy';
+
+export type TTSMode = 'pollinations' | 'browser';
+
+export type MusicStyle =
+  | 'cinematic' | 'upbeat' | 'calm' | 'dramatic' | 'corporate'
+  | 'lofi' | 'electronic' | 'ambient' | 'rock' | 'jazz';
+
+export type TransitionType = 'fade' | 'slide' | 'zoom' | 'none';
+
+export type ExportFormat = 'mp4' | 'webm';
+
+export type MediaSource = 'auto' | 'stock' | 'ai';
+
+export type SubtitleStyle = 'standard' | 'bold' | 'minimal' | 'cinematic' | 'karaoke';
+
+export type SubtitleColor = 'white' | 'yellow' | 'gold' | 'cyan';
+
+export type ThumbnailStyle = 'bold' | 'minimal' | 'cinematic' | 'vlog' | 'gaming';
 
 export type EndCardConfig = {
   enabled: boolean;
   text: string;
-  duration: number; // seconds
-  fontColor: string; // 'gold' | 'white' | etc
+  duration: number;
+  fontColor: 'gold' | 'white' | 'cyan';
+};
+
+export type BrandConfig = {
+  enabled: boolean;
+  primaryColor: string;
+  fontFamily: string;
 };
 
 export type ProjectSettings = {
@@ -56,6 +75,8 @@ export type ProjectSettings = {
   musicVolume: number;
   musicUrl?: string;
   language?: 'tr-TR' | 'en-US';
+  contentLanguage?: 'auto' | 'en' | 'tr';
+  ttsTurkishVoice?: 'Emel' | 'Ahmet';
   transition: TransitionType;
   showTitleCard: boolean;
   exportFormat: ExportFormat;
@@ -64,30 +85,4 @@ export type ProjectSettings = {
   subtitleColor: SubtitleColor;
   endCard: EndCardConfig;
   brand: BrandConfig;
-};
-
-export type YouTubeMeta = {
-  youtube_title: string | null;
-  youtube_description: string | null;
-  youtube_tags: string[] | null;
-};
-
-export type VideoProject = {
-  id: string;
-  title: string;
-  prompt: string;
-  status: 'draft' | 'generating' | 'ready' | 'failed';
-  script: Scene[] | null;
-  settings: ProjectSettings | null;
-  video_path: string | null;
-  youtube_title: string | null;
-  youtube_description: string | null;
-  youtube_tags: string[] | null;
-  thumbnail_url: string | null;
-  thumbnail_style: ThumbnailStyle | null;
-  category: string | null;
-  is_published: boolean;
-  published_at: string | null;
-  created_at: string;
-  updated_at: string;
 };
