@@ -1,11 +1,17 @@
+export type AgentLogEntry = {
+  iteration: number;
+  action: string;
+  detail: string;
+  timestamp: number;
+};
+
 export type Scene = {
   id: string;
   name?: string;
   narration: string;
   image_prompt: string;
-  search_query?: string;
-  duration: number;
-  mood?: string;
+  search_query?: string;    // AI-provided search query for stock video
+  agentLogs?: AgentLogEntry[]; // AI stock agent decision log
 };
 
 export type VideoProject = {

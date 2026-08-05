@@ -16,9 +16,13 @@ Deno.serve(async (req: Request) => {
 
   try {
     const body = await req.json();
-    const { messages, model } = body as {
-      messages: { role: string; content: string }[];
+    const { messages, model, tools, tool_choice, temperature, max_tokens } = body as {
+      messages: { role: string; content: string | null }[];
       model?: string;
+      tools?: unknown[];
+      tool_choice?: string | { type: string; function: { name: string } };
+      temperature?: number;
+      max_tokens?: number;
     };
 
     if (!messages || !Array.isArray(messages) || messages.length === 0) {
@@ -35,18 +39,23 @@ Deno.serve(async (req: Request) => {
       );
     }
 
+    const groqBody: Record<string, unknown> = {
+      model: model || "llama-3.3-70b-versatile",
+      messages,
+      temperature: temperature ?? 0.7,
+      max_tokens: max_tokens ?? 4096,
+    };
+
+    if (tools) groqBody.tools = tools;
+    if (tool_choice) groqBody.tool_choice = tool_choice;
+
     const res = await fetch(GROQ_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
         "Authorization": `Bearer ${GROQ_API_KEY}`,
       },
-      body: JSON.stringify({
-        model: model || "llama-3.3-70b-versatile",
-        messages,
-        temperature: 0.7,
-        max_tokens: 4096,
-      }),
+      body: JSON.stringify(groqBody),
     });
 
     if (!res.ok) {
@@ -58,9 +67,9 @@ Deno.serve(async (req: Request) => {
     }
 
     const data = await res.json();
-    const content = data?.choices?.[0]?.message?.content;
+    const message = data?.choices?.[0]?.message;
 
-    if (!content) {
+    if (!message) {
       return new Response(
         JSON.stringify({ error: "Empty response from Groq" }),
         { status: 502, headers: { ...corsHeaders, "Content-Type": "application/json" } },
@@ -68,7 +77,11 @@ Deno.serve(async (req: Request) => {
     }
 
     return new Response(
-      JSON.stringify({ content }),
+      JSON.stringify({
+        content: message.content ?? null,
+        tool_calls: message.tool_calls ?? null,
+        finish_reason: data?.choices?.[0]?.finish_reason ?? null,
+      }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } },
     );
   } catch (err) {
