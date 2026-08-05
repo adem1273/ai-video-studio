@@ -1,4 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { resolveApiKey } from "../_shared/keyResolver.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -6,9 +7,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-const PEXELS_API_KEY = Deno.env.get("PEXELS_API_KEY");
 const PEXELS_BASE = "https://api.pexels.com/v1/videos";
-const PIXABAY_API_KEY = Deno.env.get("PIXABAY_API_KEY") ?? "56875494-83df8d651c3899cd7be18d320";
 const PIXABAY_BASE = "https://pixabay.com/api/videos";
 
 interface NormalizedClip {
@@ -22,12 +21,12 @@ interface NormalizedClip {
   preview_url: string;
 }
 
-async function searchPexels(query: string, orientation: string, minDuration: number): Promise<NormalizedClip[]> {
-  if (!PEXELS_API_KEY) return [];
+async function searchPexels(query: string, orientation: string, minDuration: number, apiKey: string): Promise<NormalizedClip[]> {
+  if (!apiKey) return [];
   const params = new URLSearchParams({ query, per_page: "10", orientation });
   try {
     const res = await fetch(`${PEXELS_BASE}/search?${params}`, {
-      headers: { Authorization: PEXELS_API_KEY },
+      headers: { Authorization: apiKey },
     });
     if (!res.ok) return [];
     const data = await res.json();
@@ -55,10 +54,11 @@ async function searchPexels(query: string, orientation: string, minDuration: num
   }
 }
 
-async function searchPixabay(query: string, orientation: string, minDuration: number): Promise<NormalizedClip[]> {
+async function searchPixabay(query: string, orientation: string, minDuration: number, apiKey: string): Promise<NormalizedClip[]> {
+  if (!apiKey) return [];
   const pixabayOri = orientation === "portrait" ? "vertical" : orientation === "square" ? "all" : "horizontal";
   const params = new URLSearchParams({
-    key: PIXABAY_API_KEY,
+    key: apiKey,
     q: query,
     per_page: "10",
     video_type: "all",
@@ -95,6 +95,9 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
+    const authHeader = req.headers.get("Authorization") ?? "";
+    const userToken = authHeader.replace("Bearer ", "") || undefined;
+
     const body = await req.json();
     const { action, query, source, orientation, min_duration } = body as {
       action: "search";
@@ -118,12 +121,18 @@ Deno.serve(async (req: Request) => {
       let results: NormalizedClip[] = [];
 
       if (!source || source === "pexels") {
-        const pexelsResults = await searchPexels(query, ori, minDur);
-        results.push(...pexelsResults);
+        const { key } = await resolveApiKey("pexels", userToken);
+        if (key) {
+          const pexelsResults = await searchPexels(query, ori, minDur, key);
+          results.push(...pexelsResults);
+        }
       }
       if (!source || source === "pixabay") {
-        const pixabayResults = await searchPixabay(query, ori, minDur);
-        results.push(...pixabayResults);
+        const { key } = await resolveApiKey("pixabay", userToken);
+        if (key) {
+          const pixabayResults = await searchPixabay(query, ori, minDur, key);
+          results.push(...pixabayResults);
+        }
       }
 
       return new Response(

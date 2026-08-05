@@ -1,4 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { resolveApiKey } from "../_shared/keyResolver.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -6,7 +7,6 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
 const GEMINI_URL = "https://generativelanguage.googleapis.com/v1beta/models";
 
 Deno.serve(async (req: Request) => {
@@ -15,6 +15,9 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
+    const authHeader = req.headers.get("Authorization") ?? "";
+    const userToken = authHeader.replace("Bearer ", "") || undefined;
+
     const body = await req.json();
     const { messages, model } = body as {
       messages: { role: string; content: string }[];
@@ -28,9 +31,11 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    if (!GEMINI_API_KEY) {
+    const { key } = await resolveApiKey("gemini", userToken);
+
+    if (!key) {
       return new Response(
-        JSON.stringify({ error: "GEMINI_API_KEY not configured" }),
+        JSON.stringify({ error: "Bu servis için API key eklenmemiş. Ayarlar'dan Gemini API key ekleyebilirsiniz. (https://aistudio.google.com/apikey)" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
@@ -51,20 +56,15 @@ Deno.serve(async (req: Request) => {
 
     const geminiBody: Record<string, unknown> = {
       contents,
-      generationConfig: {
-        temperature: 0.7,
-        maxOutputTokens: 4096,
-      },
+      generationConfig: { temperature: 0.7, maxOutputTokens: 4096 },
     };
 
     if (systemInstruction) {
-      geminiBody.systemInstruction = {
-        parts: [{ text: systemInstruction }],
-      };
+      geminiBody.systemInstruction = { parts: [{ text: systemInstruction }] };
     }
 
     const res = await fetch(
-      `${GEMINI_URL}/${modelName}:generateContent?key=${GEMINI_API_KEY}`,
+      `${GEMINI_URL}/${modelName}:generateContent?key=${key}`,
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

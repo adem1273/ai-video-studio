@@ -1,4 +1,5 @@
 import "jsr:@supabase/functions-js/edge-runtime.d.ts";
+import { resolveApiKey } from "../_shared/keyResolver.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -6,7 +7,6 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "Content-Type, Authorization, X-Client-Info, Apikey",
 };
 
-const GROQ_API_KEY = Deno.env.get("GROQ_API_KEY");
 const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
 
 Deno.serve(async (req: Request) => {
@@ -15,6 +15,9 @@ Deno.serve(async (req: Request) => {
   }
 
   try {
+    const authHeader = req.headers.get("Authorization") ?? "";
+    const userToken = authHeader.replace("Bearer ", "") || undefined;
+
     const body = await req.json();
     const { messages, model, tools, tool_choice, temperature, max_tokens } = body as {
       messages: { role: string; content: string | null }[];
@@ -32,9 +35,11 @@ Deno.serve(async (req: Request) => {
       );
     }
 
-    if (!GROQ_API_KEY) {
+    const { key } = await resolveApiKey("groq", userToken);
+
+    if (!key) {
       return new Response(
-        JSON.stringify({ error: "GROQ_API_KEY not configured" }),
+        JSON.stringify({ error: "Bu servis için API key eklenmemiş. Ayarlar'dan Groq API key ekleyebilirsiniz. (https://console.groq.com)" }),
         { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } },
       );
     }
@@ -53,7 +58,7 @@ Deno.serve(async (req: Request) => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "Authorization": `Bearer ${GROQ_API_KEY}`,
+        "Authorization": `Bearer ${key}`,
       },
       body: JSON.stringify(groqBody),
     });
