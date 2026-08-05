@@ -16,8 +16,8 @@ import {
   sortableKeyboardCoordinates,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
-import { Film, Copy, Trash2, Clock, Pencil, Check, X, AlertCircle } from 'lucide-react';
-import type { Scene } from '@/lib/types';
+import { Film, Copy, Trash2, Clock, Pencil, Check, X, AlertCircle, Bot, ChevronDown, ChevronUp } from 'lucide-react';
+import type { Scene, AgentLogEntry } from '@/lib/types';
 
 type Props = {
   scenes: Scene[];
@@ -263,6 +263,66 @@ function SortableSceneCard({
         />
         <span className="text-[10px] text-slate-500">sn</span>
       </div>
+
+      {/* Agent Decision Log */}
+      {scene.agentLogs && scene.agentLogs.length > 0 && (
+        <AgentLogPanel logs={scene.agentLogs} />
+      )}
+    </div>
+  );
+}
+
+function AgentLogPanel({ logs }: { logs: AgentLogEntry[] }) {
+  const [expanded, setExpanded] = useState(false);
+
+  const actionLabels: Record<string, string> = {
+    thinking: 'Düşünüyor',
+    search: 'Arama',
+    results: 'Sonuçlar',
+    selected: 'Seçildi',
+    fallback: 'AI Video',
+    blocked: 'Engellendi',
+    error: 'Hata',
+    force_fallback: 'Zorunlu Fallback',
+    select_failed: 'Seçim Başarısız',
+  };
+
+  const actionColors: Record<string, string> = {
+    thinking: 'text-slate-400',
+    search: 'text-blue-400',
+    results: 'text-cyan-400',
+    selected: 'text-emerald-400',
+    fallback: 'text-amber-400',
+    blocked: 'text-red-400',
+    error: 'text-red-500',
+    force_fallback: 'text-amber-500',
+    select_failed: 'text-red-400',
+  };
+
+  return (
+    <div className="border-t border-slate-800">
+      <button
+        onClick={() => setExpanded(!expanded)}
+        className="w-full flex items-center gap-1.5 px-2 py-1.5 text-[10px] text-slate-400 hover:text-slate-200 hover:bg-slate-800/50 transition"
+      >
+        <Bot size={11} className="text-violet-400" />
+        <span className="font-medium">Ajan Kararı</span>
+        <span className="text-slate-600">({logs.length})</span>
+        <div className="flex-1" />
+        {expanded ? <ChevronUp size={11} /> : <ChevronDown size={11} />}
+      </button>
+      {expanded && (
+        <div className="px-2 pb-2 space-y-1 max-h-40 overflow-y-auto scrollbar-hide">
+          {logs.map((log, i) => (
+            <div key={i} className="flex items-start gap-1.5 text-[10px]">
+              <span className={`shrink-0 font-medium ${actionColors[log.action] ?? 'text-slate-400'}`}>
+                {actionLabels[log.action] ?? log.action}
+              </span>
+              <span className="text-slate-500 break-all">{log.detail}</span>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }
