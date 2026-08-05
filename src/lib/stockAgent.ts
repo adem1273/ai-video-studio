@@ -362,14 +362,24 @@ Find the best stock video clip for this scene.`;
       }
     }
   } catch (err) {
-    console.warn('Stock agent failed, falling back to heuristic', err);
-    addLog(0, 'error', `Ajan hatası: ${err instanceof Error ? err.message : 'unknown'}`);
+    const errMsg = err instanceof Error ? err.message : 'unknown';
+    const isRateLimit = errMsg.includes('429') || errMsg.includes('rate');
+    if (isRateLimit) {
+      addLog(0, 'error', 'Ajan geçici olarak kullanılamıyor (rate-limit), standart küratör kullanıldı');
+      console.warn('Stock agent rate-limited, falling back to heuristic curator');
+    } else {
+      addLog(0, 'error', `Ajan hatası: ${errMsg}`);
+      console.warn('Stock agent failed, falling back to heuristic', err);
+    }
   }
 
+  // Post-loop safety net: if we exited the loop without a decision,
+  // force generate_fallback_video (don't leave the caller hanging).
+  addLog(MAX_ITERATIONS, 'force_fallback', 'Ajan 4 iterasyonda karar vermedi, AI video üretimine zorlanıyor');
   return {
     video: null,
-    fallbackVideo: false,
-    fallbackPrompt: '',
+    fallbackVideo: true,
+    fallbackPrompt: sceneImagePrompt || sceneSearchQuery || sceneNarration,
     logs,
   };
 }
