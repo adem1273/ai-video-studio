@@ -11,7 +11,13 @@ export type Scene = {
   narration: string;
   image_prompt: string;
   search_query?: string;    // AI-provided search query for stock video
+  duration: number;         // Scene duration in seconds (REQUIRED)
+  mood?: string;            // Scene mood for visual direction
   agentLogs?: AgentLogEntry[]; // AI stock agent decision log
+  video_url?: string;       // Stock video URL if found
+  video_poster?: string;    // Stock video thumbnail
+  ai_video_status?: 'generating' | 'generated' | 'failed'; // AI video generation status
+  image_url?: string;       // Generated or stock image URL
 };
 
 export type VideoProject = {
@@ -42,7 +48,7 @@ export type TTSMode = 'pollinations' | 'browser';
 
 export type MusicStyle =
   | 'cinematic' | 'upbeat' | 'calm' | 'dramatic' | 'corporate'
-  | 'lofi' | 'electronic' | 'ambient' | 'rock' | 'jazz';
+  | 'lofi' | 'electronic' | 'ambient' | 'rock' | 'jazz' | 'none';
 
 export type TransitionType = 'fade' | 'slide' | 'zoom' | 'none';
 
@@ -91,4 +97,42 @@ export type ProjectSettings = {
   subtitleColor: SubtitleColor;
   endCard: EndCardConfig;
   brand: BrandConfig;
+};
+
+// Type definitions for rendering
+export type RenderProgress = {
+  scene: number;           // Current scene index
+  total: number;           // Total scenes
+  phase: 'preparing' | 'rendering' | 'encoding' | 'transcoding';
+  message: string;         // Human-readable progress message
+  framesRendered?: number; // Frames rendered so far
+  totalFrames?: number;    // Total frames to render
+};
+
+export type RenderOptions = {
+  outputFormat: ExportFormat;
+  quality?: 'low' | 'medium' | 'high';
+  fps?: number;
+  shouldTranscode?: boolean;
+};
+
+export type SubtitleEntry = {
+  startTime: number;       // Start time in seconds
+  endTime: number;         // End time in seconds
+  text: string;           // Subtitle text
+  index: number;          // Sequential index
+};
+
+export type AudioTrack = {
+  audioBuffer: AudioBuffer;
+  startTime: number;      // Absolute start time in seconds
+  endTime: number;        // Absolute end time in seconds
+};
+
+export type AppError = {
+  code: string;
+  message: string;
+  details?: string;
+  timestamp: number;
+  severity: 'info' | 'warning' | 'error' | 'critical';
 };
