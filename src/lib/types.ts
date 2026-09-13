@@ -16,8 +16,11 @@ export type Scene = {
   agentLogs?: AgentLogEntry[]; // AI stock agent decision log
   video_url?: string;       // Stock video URL if found
   video_poster?: string;    // Stock video thumbnail
+  video_alt_urls?: string[]; // Alternative video URLs for fallback loading
+  ai_video_url?: string;    // AI-generated video URL
   ai_video_status?: 'generating' | 'generated' | 'failed'; // AI video generation status
   image_url?: string;       // Generated or stock image URL
+  mediaError?: string;      // Error message if media loading failed
 };
 
 export type VideoProject = {
@@ -50,13 +53,13 @@ export type MusicStyle =
   | 'cinematic' | 'upbeat' | 'calm' | 'dramatic' | 'corporate'
   | 'lofi' | 'electronic' | 'ambient' | 'rock' | 'jazz' | 'none';
 
-export type TransitionType = 'fade' | 'slide' | 'zoom' | 'none';
+export type TransitionType = 'fade' | 'slide' | 'zoom' | 'none' | 'cut' | 'crossfade';
 
 export type ExportFormat = 'mp4' | 'webm';
 
-export type MediaSource = 'auto' | 'stock' | 'ai';
+export type MediaSource = 'auto' | 'stock' | 'ai' | 'ai-video';
 
-export type SubtitleStyle = 'standard' | 'bold' | 'minimal' | 'cinematic' | 'karaoke';
+export type SubtitleStyle = 'standard' | 'kinetic' | 'minimal' | 'cinematic' | 'karaoke' | 'none' | 'bold';
 
 export type SubtitleColor = 'white' | 'yellow' | 'gold' | 'cyan';
 
@@ -73,6 +76,7 @@ export type BrandConfig = {
   enabled: boolean;
   primaryColor: string;
   fontFamily: string;
+  watermarkText?: string;
 };
 
 export type ProjectSettings = {
