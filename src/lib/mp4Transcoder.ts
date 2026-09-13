@@ -4,6 +4,9 @@ import { fetchFile } from '@ffmpeg/util';
 let ffmpegInstance: FFmpeg | null = null;
 let loadPromise: Promise<FFmpeg> | null = null;
 
+/**
+ * Get or initialize FFmpeg instance
+ */
 async function getFFmpeg(): Promise<FFmpeg> {
   if (ffmpegInstance && ffmpegInstance.loaded) return ffmpegInstance;
   if (loadPromise) return loadPromise;
@@ -14,7 +17,8 @@ async function getFFmpeg(): Promise<FFmpeg> {
     await ff.load({
       coreURL: `${baseURL}/ffmpeg-core.js`,
       wasmURL: `${baseURL}/ffmpeg-core.wasm`,
-    });    ffmpegInstance = ff;
+    });
+    ffmpegInstance = ff;
     return ff;
   })();
 
@@ -26,37 +30,54 @@ async function getFFmpeg(): Promise<FFmpeg> {
   }
 }
 
+/**
+ * Transcode WebM to MP4 format
+ */
 export async function transcodeToMP4(
   blob: Blob,
   onProgress?: (ratio: number) => void,
 ): Promise<Blob> {
-  const ff = await getFFmpeg();
-  const inputName = 'input.webm';
-  const outputName = 'output.mp4';
+  try {
+    const ff = await getFFmpeg();
+    const inputName = 'input.webm';
+    const outputName = 'output.mp4';
 
-  ff.on('progress', ({ progress }) => {
-    if (onProgress && progress >= 0 && progress <= 1) {
-      onProgress(progress);
+    ff.on('progress', ({ progress }) => {
+      if (onProgress && progress >= 0 && progress <= 1) {
+        onProgress(progress);
+      }
+    });
+
+    await ff.writeFile(inputName, await fetchFile(blob));
+    await ff.exec([
+      '-i', inputName,
+      '-c:v', 'libx264',
+      '-preset', 'fast',
+      '-crf', '23',
+      '-c:a', 'aac',
+      '-b:a', '128k',
+      '-movflags', '+faststart',
+      outputName,
+    ]);
+    
+    const data = await ff.readFile(outputName);
+    
+    try {
+      await ff.deleteFile(inputName);
+      await ff.deleteFile(outputName);
+    } catch {
+      // best-effort cleanup
     }
-  });
-
-  await ff.writeFile(inputName, await fetchFile(blob));
-  await ff.exec([
-    '-i', inputName,
-    '-c:v', 'libx264',
-    '-preset', 'fast',
-    '-crf', '23',
-    '-c:a', 'aac',
-    '-b:a', '128k',
-    '-movflags', '+faststart',
-    outputName,
-  ]);
-  const data = await ff.readFile(outputName);
-  await ff.deleteFile(inputName);
-  await ff.deleteFile(outputName);
-  return new Blob([data], { type: 'video/mp4' });
+    
+    return new Blob([data], { type: 'video/mp4' });
+  } catch (err) {
+    throw new Error(`MP4 transcode failed: ${err instanceof Error ? err.message : String(err)}`);
+  }
 }
 
+/**
+ * Check if FFmpeg is ready for use
+ */
 export async function isFFmpegReady(): Promise<boolean> {
   try {
     await getFFmpeg();
@@ -68,78 +89,92 @@ export async function isFFmpegReady(): Promise<boolean> {
 
 /**
  * Encode a sequence of PNG frame blobs + a WAV audio blob into an MP4
- * using a deterministic frame-by-frame pipeline (no MediaRecorder).
- * Frames are written to FFmpeg's MEMFS as frame_00000.png ... frame_NNNNN.png
- * and combined with the audio track via libx264 + aac.
  */
 export async function encodeFramesToMP4(
   frames: Blob[],
   audio: Blob | null,
   onProgress?: (ratio: number) => void,
 ): Promise<Blob> {
-  if (frames.length === 0) throw new Error('No frames to encode');
-
-  const ff = await getFFmpeg();
-  const outputName = 'output.mp4';
-  const framePattern = 'frame_%05d.png';
-  const audioName = 'audio.wav';
-
-  for (let i = 0; i < frames.length; i++) {
-    const fname = `frame_${String(i).padStart(5, '0')}.png`;
-    await ff.writeFile(fname, await fetchFile(frames[i]));
-    if (onProgress && (i % 30 === 0)) {
-      onProgress(Math.min(0.3, (i / frames.length) * 0.3));
-    }
+  if (!frames || frames.length === 0) {
+    throw new Error('No frames provided for encoding');
   }
-
-  let hasAudio = false;
-  if (audio && audio.size > 0) {
-    await ff.writeFile(audioName, await fetchFile(audio));
-    hasAudio = true;
-  }
-
-  ff.on('progress', ({ progress }) => {
-    if (onProgress && progress >= 0 && progress <= 1) {
-      onProgress(0.3 + progress * 0.7);
-    }
-  });
-
-  const args: string[] = [
-    '-framerate', '30',
-    '-i', framePattern,
-  ];
-  if (hasAudio) args.push('-i', audioName);
-  args.push(
-    '-c:v', 'libx264',
-    '-preset', 'fast',
-    '-crf', '23',
-    '-pix_fmt', 'yuv420p',
-  );
-  if (hasAudio) {
-    args.push('-c:a', 'aac', '-b:a', '128k', '-shortest');
-  }
-  args.push('-movflags', '+faststart', outputName);
-
-  await ff.exec(args);
-  const data = await ff.readFile(outputName);
 
   try {
+    const ff = await getFFmpeg();
+    const outputName = 'output.mp4';
+    const framePattern = 'frame_%05d.png';
+    const audioName = 'audio.wav';
+
+    // Write frames to FFmpeg memory
     for (let i = 0; i < frames.length; i++) {
       const fname = `frame_${String(i).padStart(5, '0')}.png`;
-      await ff.deleteFile(fname);
+      await ff.writeFile(fname, await fetchFile(frames[i]));
+      if (onProgress && (i % 30 === 0)) {
+        onProgress(Math.min(0.3, (i / frames.length) * 0.3));
+      }
     }
-    if (hasAudio) await ff.deleteFile(audioName);
-    await ff.deleteFile(outputName);
-  } catch {
-    // best-effort cleanup
-  }
 
-  return new Blob([data], { type: 'video/mp4' });
+    // Write audio if provided
+    let hasAudio = false;
+    if (audio && audio.size > 0) {
+      await ff.writeFile(audioName, await fetchFile(audio));
+      hasAudio = true;
+    }
+
+    // Setup progress tracking for encoding
+    ff.on('progress', ({ progress }) => {
+      if (onProgress && progress >= 0 && progress <= 1) {
+        onProgress(0.3 + progress * 0.7);
+      }
+    });
+
+    // Build FFmpeg arguments
+    const args: string[] = [
+      '-framerate', '30',
+      '-i', framePattern,
+    ];
+    
+    if (hasAudio) {
+      args.push('-i', audioName);
+    }
+    
+    args.push(
+      '-c:v', 'libx264',
+      '-preset', 'fast',
+      '-crf', '23',
+      '-pix_fmt', 'yuv420p',
+    );
+    
+    if (hasAudio) {
+      args.push('-c:a', 'aac', '-b:a', '128k', '-shortest');
+    }
+    
+    args.push('-movflags', '+faststart', outputName);
+
+    // Execute encoding
+    await ff.exec(args);
+    const data = await ff.readFile(outputName);
+
+    // Cleanup
+    try {
+      for (let i = 0; i < frames.length; i++) {
+        const fname = `frame_${String(i).padStart(5, '0')}.png`;
+        await ff.deleteFile(fname);
+      }
+      if (hasAudio) await ff.deleteFile(audioName);
+      await ff.deleteFile(outputName);
+    } catch {
+      // best-effort cleanup
+    }
+
+    return new Blob([data], { type: 'video/mp4' });
+  } catch (err) {
+    throw new Error(`Frame encoding failed: ${err instanceof Error ? err.message : String(err)}`);
+  }
 }
 
 /**
- * Encode an AudioBuffer (e.g. from OfflineAudioContext.startRendering) into a
- * 16-bit PCM WAV Blob suitable as FFmpeg audio input.
+ * Encode an AudioBuffer into a 16-bit PCM WAV Blob
  */
 export function audioBufferToWav(buffer: AudioBuffer): Blob {
   const numChannels = buffer.numberOfChannels;
@@ -171,7 +206,10 @@ export function audioBufferToWav(buffer: AudioBuffer): Blob {
   view.setUint32(40, dataSize, true);
 
   const channels: Float32Array[] = [];
-  for (let ch = 0; ch < numChannels; ch++) channels.push(buffer.getChannelData(ch));
+  for (let ch = 0; ch < numChannels; ch++) {
+    channels.push(buffer.getChannelData(ch));
+  }
+
   let offset = 44;
   for (let i = 0; i < numFrames; i++) {
     for (let ch = 0; ch < numChannels; ch++) {
@@ -185,6 +223,74 @@ export function audioBufferToWav(buffer: AudioBuffer): Blob {
   return new Blob([arr], { type: 'audio/wav' });
 }
 
+/**
+ * Helper to write ASCII string to DataView
+ */
 function writeString(view: DataView, offset: number, str: string): void {
-  for (let i = 0; i < str.length; i++) view.setUint8(offset + i, str.charCodeAt(i));
+  for (let i = 0; i < str.length; i++) {
+    view.setUint8(offset + i, str.charCodeAt(i));
+  }
+}
+
+/**
+ * Detect available audio/video codecs
+ */
+export function getAvailableCodecs(): {
+  video: string[];
+  audio: string[];
+} {
+  const video: string[] = [];
+  const audio: string[] = [];
+
+  const videoElement = document.createElement('video');
+  
+  // Test common video codecs
+  const videoCodecs = [
+    'video/webm; codecs="vp8"',
+    'video/webm; codecs="vp9"',
+    'video/mp4; codecs="avc1.42E01E"',
+    'video/mp4; codecs="hev1.1.6.L93.B0"',
+  ];
+
+  videoCodecs.forEach((codec) => {
+    if (videoElement.canPlayType(codec)) {
+      video.push(codec);
+    }
+  });
+
+  const audioElement = document.createElement('audio');
+  
+  // Test common audio codecs
+  const audioCodecs = [
+    'audio/webm; codecs="opus"',
+    'audio/webm; codecs="vorbis"',
+    'audio/mp4; codecs="mp4a.40.2"',
+    'audio/wav',
+  ];
+
+  audioCodecs.forEach((codec) => {
+    if (audioElement.canPlayType(codec)) {
+      audio.push(codec);
+    }
+  });
+
+  return { video, audio };
+}
+
+/**
+ * Get supported export format
+ */
+export function getSupportedExportFormats(): Array<'mp4' | 'webm'> {
+  const formats: Array<'mp4' | 'webm'> = [];
+  const videoElement = document.createElement('video');
+
+  if (videoElement.canPlayType('video/webm; codecs="vp8,opus"')) {
+    formats.push('webm');
+  }
+
+  if (videoElement.canPlayType('video/mp4; codecs="avc1.42E01E"')) {
+    formats.push('mp4');
+  }
+
+  return formats.length > 0 ? formats : ['webm'];
 }
