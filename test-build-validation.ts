@@ -1,6 +1,6 @@
 /**
  * Build Validation Test Suite
- * Restore edilen 3 dosyanın TypeScript derleme kontrolü
+ * Restore edilen dosyaların TypeScript derleme kontrolü
  */
 
 // ═══════════════════════════════════════════════════════════════
@@ -60,11 +60,11 @@ console.log('  - generateSpeech() fonksiyonu mevcut:', typeof generateSpeech);
 // 4. videoRenderer.ts - Video Render Hattı Tipi Kontrolü
 // ═══════════════════════════════════════════════════════════════
 import type { Scene, ProjectSettings } from './src/lib/types';
-import { renderVideo, encodeFramesToMP4, audioBufferToWav } from './src/lib/videoRenderer';
+import { renderVideo, encodeFramesToWebM, audioBufferToWav } from './src/lib/videoRenderer';
 
 console.log('✓ videoRenderer.ts derlenme başarılı');
 console.log('  - renderVideo() fonksiyonu mevcut:', typeof renderVideo);
-console.log('  - encodeFramesToMP4() fonksiyonu mevcut:', typeof encodeFramesToMP4);
+console.log('  - encodeFramesToWebM() fonksiyonu mevcut:', typeof encodeFramesToWebM);
 console.log('  - audioBufferToWav() fonksiyonu mevcut:', typeof audioBufferToWav);
 
 // ═══════════════════════════════════════════════════════════════
