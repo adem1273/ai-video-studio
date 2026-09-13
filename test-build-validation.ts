@@ -19,14 +19,14 @@ console.log('  - getAllProjectsLocal() fonksiyonu mevcut:', typeof getAllProject
 console.log('  - deleteProjectLocal() fonksiyonu mevcut:', typeof deleteProjectLocal);
 
 // ═══════════════════════════════════════════════════════════════
-// 2. pollinations.ts - LLM Senaryo + TTS Tipi Kontrolü
+// 2. pollinations.ts - Senaryo Tipi Kontrolü
 // ═══════════════════════════════════════════════════════════════
 import type { AIScene, LangOverride } from './src/lib/pollinations';
 import { 
-  generateSpeech, 
   detectLangOverride, 
   buildScriptMessages, 
-  imageUrl 
+  imageUrl,
+  preloadImage
 } from './src/lib/pollinations';
 
 // AIScene türü kontrolü
@@ -37,10 +37,10 @@ const testScene: AIScene = {
 };
 
 console.log('✓ pollinations.ts derlenme başarılı - AIScene türü geçerli');
-console.log('  - generateSpeech() fonksiyonu mevcut:', typeof generateSpeech);
 console.log('  - detectLangOverride() fonksiyonu mevcut:', typeof detectLangOverride);
 console.log('  - buildScriptMessages() fonksiyonu mevcut:', typeof buildScriptMessages);
 console.log('  - imageUrl() fonksiyonu mevcut:', typeof imageUrl);
+console.log('  - preloadImage() fonksiyonu mevcut:', typeof preloadImage);
 
 // Language detection test
 const langTr = detectLangOverride('Merhaba dünya');
@@ -49,7 +49,15 @@ console.log('  - Turkish detection:', langTr === 'tr' ? '✓' : '✗');
 console.log('  - English detection:', langEn === 'en' ? '✓' : '✗');
 
 // ═══════════════════════════════════════════════════════════════
-// 3. videoRenderer.ts - Video Render Hattı Tipi Kontrolü
+// 3. tts.ts - TTS Fonksiyonları
+// ═══════════════════════════════════════════════════════════════
+import { generateSpeech } from './src/lib/tts';
+
+console.log('✓ tts.ts derlenme başarılı');
+console.log('  - generateSpeech() fonksiyonu mevcut:', typeof generateSpeech);
+
+// ═══════════════════════════════════════════════════════════════
+// 4. videoRenderer.ts - Video Render Hattı Tipi Kontrolü
 // ═══════════════════════════════════════════════════════════════
 import type { Scene, ProjectSettings } from './src/lib/types';
 import { renderVideo, encodeFramesToMP4, audioBufferToWav } from './src/lib/videoRenderer';
@@ -63,7 +71,8 @@ console.log('  - audioBufferToWav() fonksiyonu mevcut:', typeof audioBufferToWav
 // SONUÇ
 // ═══════════════════════════════════════════════════════════════
 console.log('\n✅ BUILD TESİ BAŞARILI');
-console.log('   Tüm 3 dosya TypeScript derlemesi başarılı');
+console.log('   Tüm 4 dosya TypeScript derlemesi başarılı');
 console.log('   - projectStore.ts: ✓ Geçti');
 console.log('   - pollinations.ts: ✓ Geçti');
+console.log('   - tts.ts: ✓ Geçti');
 console.log('   - videoRenderer.ts: ✓ Geçti');
