@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import React from 'react';
 
 type ErrorBoundaryProps = {
   onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
@@ -18,14 +18,11 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
   }
 
   static getDerivedStateFromError(error: Error) {
-    // State güncellemek için yeniden render et
     return { hasError: true, error };
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    // Log error to console
     console.error('Error caught by ErrorBoundary:', error, errorInfo);
-    // Optional: props'tan callback çağrısı
     if (this.props.onError) {
       this.props.onError(error, errorInfo);
     }
@@ -33,34 +30,20 @@ export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoun
 
   render() {
     if (this.state.hasError) {
-      // Fallback UI göster
-      const { fallback, onError } = this.props;
+      const fallbackUI = (
+        <div>
+          <h3 className='text-red-600 mb-2'>Bir hata oluştu</h3>
+          <p className='text-sm text-gray-600'>
+            {this.state.error?.message || 'Bilinmeyen hata'}
+          </p>
+          <button onClick={() => window.location.reload()} className='mt-2 px-4 py-2 bg-blue-500 text-white rounded'>
+            Tekrar Dene
+          </button>
+        </div>
+      );
       return (
-        <div className="error-boundary" style={
-          padding: '20px';
-          background: '#fef3c7';
-          border: '1px solid #f5dce4';
-          borderRadius: '8px';
-          margin: '16px 0';
-        }>
-          {fallback || (
-            <div>
-              <h3 className="text-red-600 mb-2">Bir hata oluştu</h3>
-              <p className="text-sm text-gray-600">
-                {this.state.error?.message || 'Bilinmeyen hata'}
-              </p>
-              <button
-                onClick={() => {
-                  // Reset error state (for development)
-                  // production'da bu genellikle gerekmez
-                  window.location.reload();
-                }}
-                className="mt-2 px-4 py-2 bg-blue-500 text-white rounded"
-              >
-                Tekrar Dene
-              </button>
-            </div>
-          )}
+        <div style={{padding: '20px', background: '#fef3c7', border: '1px solid #f5dce4', borderRadius: '8px', margin: '16px 0' }}>
+          {fallback || fallbackUI}
         </div>
       );
     }

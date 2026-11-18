@@ -289,7 +289,7 @@ export function VideoPreview({
       ? `${Math.round((progress.scene / Math.max(progress.total, 1)) * 40)}%`
       : progress.phase === 'rendering'
         ? `${40 + Math.round((progress.framesRendered || 0) / Math.max(progress.totalFrames || 1, 1)) * 50)}%`
-        : `${90 + Math.round(transcodeProgress * 10)}%`
+        : `${Math.round(90 + transcodeProgress * 10)}%`
     : '0%';
 
   const handleImageError = (i: number) => {
@@ -407,7 +407,7 @@ export function VideoPreview({
               <div
                 className="absolute top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-white shadow opacity-0 group-hover/scrub:opacity-100 transition"
                 style={{
-                  left: `calc(${videoDuration ? (currentTime / videoDuration) * 100 : 0}% - 6px)`,
+                  left: `calc((videoDuration ? (currentTime / videoDuration) * 100 : 0) + "%")`,
                 }}
               />
             </div>
