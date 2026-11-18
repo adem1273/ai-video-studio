@@ -39,11 +39,17 @@ async function callPollinations(
 
   for (let attempt = 0; attempt < maxRetries; attempt++) {
     try {
-      const res = await fetch(`${TEXT_API}/openai`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body),
-      });
+      // Add timeout to fetch
+      const res = await Promise.race([
+        fetch(`${TEXT_API}/openai`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body),
+        }),
+        new Promise<never>((_, reject) => 
+          setTimeout(() => reject(new Error('Fetch timeout')), 30000)
+        )
+      ]);
 
       if (res.status === 402 || res.status === 429) {
         if (attempt < maxRetries - 1) {
@@ -60,8 +66,10 @@ async function callPollinations(
       const content = data?.choices?.[0]?.message?.content;
       return parseScriptResponse(content);
     } catch (err) {
+      console.warn(`Pollinations attempt ${attempt + 1} failed:`, err);
       if (attempt < maxRetries - 1) {
-        await new Promise((r) => setTimeout(r, (attempt + 1) * 3000));
+        const wait = Math.min(5000 * Math.pow(2, attempt), 15000);
+        await new Promise((r) => setTimeout(r, wait));
       } else {
         throw err;
       }
@@ -74,11 +82,16 @@ async function callGroq(
   messages: { role: string; content: string }[],
 ): Promise<{ title: string; scenes: AIScene[] }> {
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL ?? '';
-  const res = await fetch(`${supabaseUrl}/functions/v1/groq-chat`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages, model: 'llama-3.3-70b-versatile' }),
-  });
+  const res = await Promise.race([
+    fetch(`${supabaseUrl}/functions/v1/groq-chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages, model: 'llama-3.3-70b-versatile' }),
+    }),
+    new Promise<never>((_, reject) => 
+      setTimeout(() => reject(new Error('Groq fetch timeout')), 15000)
+    )
+  ]);
 
   if (!res.ok) {
     const errText = await res.text().catch(() => '');
@@ -93,11 +106,16 @@ async function callGemini(
   messages: { role: string; content: string }[],
 ): Promise<{ title: string; scenes: AIScene[] }> {
   const supabaseUrl = import.meta.env.VITE_SUPABASE_URL ?? '';
-  const res = await fetch(`${supabaseUrl}/functions/v1/gemini-chat`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages, model: 'gemini-2.0-flash' }),
-  });
+  const res = await Promise.race([
+    fetch(`${supabaseUrl}/functions/v1/gemini-chat`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ messages, model: 'gemini-2.0-flash' }),
+    }),
+    new Promise<never>((_, reject) => 
+      setTimeout(() => reject(new Error('Gemini fetch timeout')), 15000)
+    )
+  ]);
 
   if (!res.ok) {
     const errText = await res.text().catch(() => '');

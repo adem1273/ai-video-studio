@@ -140,3 +140,45 @@ export type AppError = {
   timestamp: number;
   severity: 'info' | 'warning' | 'error' | 'critical';
 };
+
+export type RenderError = AppError & {
+  framesRendered: number;
+  totalFrames: number;
+  sceneIndex: number;
+  sceneId: string;
+};
+
+export type AgentOutput<T> = {
+  success: boolean;
+  data?: T;
+  error?: RenderError;
+  progress?: number;
+  message?: string;
+};
+
+export type SceneValidationError = {
+  sceneIndex: number;
+  errors: string[];
+};
+
+export type ProjectValidationError = {
+  field: keyof ProjectSettings;
+  message: string;
+};
+
+export type ProgressCallback = (
+  progress: {
+    phase: 'preparing' | 'rendering' | 'encoding' | 'transcoding';
+    message: string;
+    percentage: number;
+    scene?: number;
+  }) => void;
+
+export type VideoMetadata = {
+  title: string;
+  description: string;
+  tags: string[];
+  thumbnail: string | null;
+  duration: number;
+  format: ExportFormat;
+};
