@@ -18,7 +18,7 @@ export type ScriptResult = {
   scenes: AIScene[];
 };
 
-export async function agentScriptwriter(
+export async if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/iction agentScriptwriter(
   prompt: string,
   sceneCount: number,
   targetLang?: 'tr-TR' | 'en-US',
@@ -37,25 +37,25 @@ export type VisualDirection = {
 };
 
 // YENI: Narration'dan mood belirle (sahne icerigine Gore, index'e degil)
-function determineMoodFromNarration(narration: string): string {
+if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/iction determineMoodFromNarration(narration: string): string {
   const lower = narration.toLowerCase();
   if (/korku|korkak|kutsal|mysterious|sihir|magical|enigmatic/i.test(lower)) return 'mysterious';
-  if /savas|dovus|dramatik|kavg|tensions|conflict|battle|fight/i.test(lower)) return 'tense';
-  if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/i.test(lower)) return 'happy';
-  if /oyun|oyun|cache|dynamic|hareketli|action|energetic/i.test(lower)) return 'tense';
+  if /if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|dramatik|kavg|tensions|if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|fight/i|if /if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|dramatik|kavg|tensions|if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|fight/i|if /if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|dramatik|kavg|tensions|if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|fight/i|if /if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|dramatik|kavg|tensions|if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|fight/i|if /if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|dramatik|kavg|tensions|if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|fight/i|if /if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|dramatik|kavg|tensions|if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|fight/i|if /if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|dramatik|kavg|tensions|if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|fight/i|if /if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|dramatik|kavg|tensions|if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|fight/i.test(lower)) return 'tense';
+  if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/i|if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/i|if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/i|if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/i|if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/i|if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/i|if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/i|if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/i.test(lower)) return 'if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/i';
+  if /oyun|oyun|cache|dynamic|hareketli|if /fight|battle|dovus|conflict|action|savas|dramatik/i|energetic/i|if /oyun|oyun|cache|dynamic|hareketli|if /fight|battle|dovus|conflict|action|savas|dramatik/i|energetic/i|if /oyun|oyun|cache|dynamic|hareketli|if /fight|battle|dovus|conflict|action|savas|dramatik/i|energetic/i|if /oyun|oyun|cache|dynamic|hareketli|if /fight|battle|dovus|conflict|action|savas|dramatik/i|energetic/i|if /oyun|oyun|cache|dynamic|hareketli|if /fight|battle|dovus|conflict|action|savas|dramatik/i|energetic/i|if /oyun|oyun|cache|dynamic|hareketli|if /fight|battle|dovus|conflict|action|savas|dramatik/i|energetic/i|if /oyun|oyun|cache|dynamic|hareketli|if /fight|battle|dovus|conflict|action|savas|dramatik/i|energetic/i.test(lower)) return 'tense';
   return 'neutral';
 }
 
 // YENI: Narration'dan composition belirle (sahne icerigine Gore, index'e degil)
-function determineCompositionFromNarration(narration: string): string {
+if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/iction determineCompositionFromNarration(narration: string): string {
   const lower = narration.toLowerCase();
-  // Kahraman/ protagonisti odaklı sahne
-  if /kahraman|helden|hero|davala|protagonist|main character/i.test(lower) {
+  // Kahraman/ if /kahraman|helden|hero|davala|protagonist|main character/ii odaklı sahne
+  if /kahraman|helden|hero|davala|protagonist|main character/i|if /kahraman|helden|hero|davala|protagonist|main character/i|if /kahraman|helden|hero|davala|protagonist|main character/i|if /kahraman|helden|hero|davala|protagonist|main character/i|if /kahraman|helden|hero|davala|protagonist|main character/i|if /kahraman|helden|hero|davala|protagonist|main character/i.test(lower) {
     return 'close-up portrait';
   }
   // Eylem/ fight sahnesi
-  if /fight|battle|dovus|conflict|action|savas|dramatik/i.test(lower) {
-    return 'dynamic close-up';
+  if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|dramatik|kavg|tensions|if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|fight/i|if /if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|dramatik|kavg|tensions|if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|fight/i|if /if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|dramatik|kavg|tensions|if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|fight/i|if /oyun|oyun|cache|dynamic|hareketli|if /fight|battle|dovus|conflict|action|savas|dramatik/i|energetic/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|dramatik|kavg|tensions|if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|fight/i/i.test(lower) {
+    return 'if /oyun|oyun|cache|dynamic|hareketli|if /fight|battle|dovus|conflict|action|savas|dramatik/i|energetic/i close-up';
   }
   // Ogretici/ nasil yapilir
   if /nasıl|how-to|adım adım|ögren|learn|guide|tutorial/i.test(lower) {
@@ -73,7 +73,7 @@ function determineCompositionFromNarration(narration: string): string {
   return 'medium shot';
 }
 
-export async function agentVisualDirector(
+export async if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/iction agentVisualDirector(
   scenes: AIScene[],
   style: string,
 ): Promise<VisualDirection[]> {
@@ -102,7 +102,7 @@ export type CuratedVideo = {
   reason: string;
 };
 
-export async function agentVideoCurator(
+export async if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/iction agentVideoCurator(
   scenes: { narration: string; search_query: string }[],
   orientation: 'landscape' | 'portrait' | 'square',
 ): Promise<(StockVideo | null)[]> {
@@ -166,7 +166,7 @@ export type CuratorResult = {
   agentLogs: AgentLogEntry[][];
 };
 
-export async function agentVideoCuratorWithAI(
+export async if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/iction agentVideoCuratorWithAI(
   scenes: { narration: string; search_query: string; image_prompt: string }[],
   orientation: 'landscape' | 'portrait' | 'square',
   minDuration: number,
@@ -219,7 +219,7 @@ export type SEOResult = {
   tags: string[];
 };
 
-export async function agentSEO(
+export async if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/iction agentSEO(
   prompt: string,
   scenes: Scene[],
   title: string,
@@ -241,7 +241,7 @@ export async function agentSEO(
 
   const description = isTurkish
     ? `${topic} hakkında her şey bu videoda! ${scenes.length} bölümde detaylıca anlattık.\n\n${sceneSummary}\n\nBeğendiyseniz abone olun ve beğenmeyi unutmayın!\n\n#video #${topic.replace(/\s+/g, '')} #içerik`
-    : `Everything about ${topic} in this video! ${scenes.length} parts explained in detail.\n\n${sceneSummary}\n\nSubscribe and like if you enjoyed!\n\n#video #${topic.replace(/\s+/g, '')} #content`;
+    : `Everything about ${topic} in this video! ${scenes.length} parts explained in detail.\n\n${sceneSummary}\n\nSubscribe and like if you enif /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/ied!\n\n#video #${topic.replace(/\s+/g, '')} #content`;
 
   const tags = [
     ...prompt.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, '').split(/\s+/).filter((w) => w.length > 3).slice(0, 8),
@@ -274,7 +274,7 @@ export type FactoryResult = {
   seo: SEOResult;
 };
 
-export async function runFactoryMode(
+export async if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/iction runFactoryMode(
   prompt: string,
   sceneCount: number,
   settings: ProjectSettings,

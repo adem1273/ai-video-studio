@@ -1,11 +1,10 @@
 // Test setup for AI Video Studio
 import '@testing-library/jdom';
-import { errorHandler } from '@/lib/errorHandler';
 
 // Mock Supabase for tests
 const mockSupabase = {
   from: () => ({
-    select: () => ({ data: [], error: null, eq: () => ({}), single: () => ({}), insert: () => ({}), update: () => ({)}),
+    select: () => ({ data: [], error: null, eq: () => ({}), single: () => ({)}, insert: () => ({), update: () => ({)}),
     rpc: () => ({}),
   }),
 };
