@@ -5,13 +5,15 @@ export type AgentLogEntry = {
   timestamp: number;
 };
 
+export type PositiveNumber = number & { __positive: true };
+
 export type Scene = {
   id: string;
   name?: string;
   narration: string;
   image_prompt: string;
   search_query?: string;    // AI-provided search query for stock video
-  duration: number;         // Scene duration in seconds (REQUIRED)
+  duration: PositiveNumber; // Scene duration in seconds (REQUIRED, must be > 0)
   mood?: string;            // Scene mood for visual direction
   agentLogs?: AgentLogEntry[]; // AI stock agent decision log
   video_url?: string;       // Stock video URL if found
@@ -174,6 +176,37 @@ export type ProgressCallback = (
     scene?: number;
   }) => void;
 
+
+
+/** Type guard: checks if obj is a valid Scene */
+export function isScene(obj: unknown): obj is Scene {
+  if (!obj || typeof obj !== 'object') return false;
+  const s = obj as Record<string, unknown>;
+  return !!s.id && typeof s.id === 'string' &&
+    !!s.narration && typeof s.narration === 'string' &&
+    typeof s.duration === 'number' && s.duration > 0 &&
+    !!s.image_prompt && typeof s.image_prompt === 'string';
+}
+
+/** Type guard: checks if obj is a valid VideoProject */
+export function isProject(obj: unknown): obj is VideoProject {
+  if (!obj || typeof obj !== 'object') return false;
+  const p = obj as Record<string, unknown>;
+  return !!p.id && typeof p.id === 'string' &&
+    !!p.title && typeof p.title === 'string' &&
+    Array.isArray(p.script) && p.script.length > 0;
+}
+
+/** Type guard: checks if obj is valid ProjectSettings */
+export function isProjectSettings(obj: unknown): obj is ProjectSettings {
+  if (!obj || typeof obj !== 'object') return false;
+  const s = obj as Record<string, unknown>;
+  const required: (keyof ProjectSettings)[] = [
+    'voice', 'ttsVoice', 'ttsMode', 'rate', 'style',
+    'aspect', 'resolution', 'music', 'musicVolume'
+  ];
+  return required.every(key => key in s && typeof s[key] !== 'undefined');
+}
 export type VideoMetadata = {
   title: string;
   description: string;

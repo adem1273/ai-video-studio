@@ -290,7 +290,9 @@ export function PromptInput({ onGenerated, settings }: Props) {
           const batchEnd = Math.min(batchStart + batchSize, scenes.length);
           const batchPromises = [];
           for (let i = batchStart; i < batchEnd; i++) {
-            const scene = scenes[i] as Scene & { search_query?: string };
+            const scene = scenes[i];
+            // Use type guard for safety
+            if (!isScene(scene)) continue;
             // Build search query from narration (content-rich) instead of image_prompt (style-heavy)
             const narrationQuery = buildSearchQueryFromNarration(scene.narration);
             const rawQuery = scene.search_query || narrationQuery || extractSearchQueryFallback(scene.image_prompt);
