@@ -38,7 +38,7 @@ function entryToItem(entry: BatchQueueEntry): QueueItem {
   const project = JSON.parse(entry.projectJson) as VideoProject;
   return {
     project,
-    status: entry.status === 'rendering' ? 'pending' : (entry.status as QueueItem['status']),
+    status: entry.status === 'rendering' ? 'pending' : (entry.status as string | undefined || 'pending'),
     progress: entry.progress,
     error: entry.error,
     videoBlob: entry.videoBlob,

@@ -13,10 +13,10 @@ async function getFFmpeg(): Promise<FFmpeg> {
 
   loadPromise = (async () => {
     const ff = new FFmpeg();
-    const baseURL = 'https://unpkg.com/@ffmpeg/core@0.12.10/dist/umd';
+    const FFMPEG_CORE_URL = import.meta.env.VITE_FFMPEG_CORE_URL || 'https://unpkg.com/@ffmpeg/core@0.12.10/dist/umd';
     await ff.load({
-      coreURL: `${baseURL}/ffmpeg-core.js`,
-      wasmURL: `${baseURL}/ffmpeg-core.wasm`,
+      coreURL: `${FFMPEG_CORE_URL}/ffmpeg-core.js`,
+      wasmURL: `${FFMPEG_CORE_URL}/ffmpeg-core.wasm`,
     });
     ffmpegInstance = ff;
     return ff;

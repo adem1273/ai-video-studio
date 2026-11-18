@@ -29,7 +29,7 @@ function detectVideoType(prompt: string): VideoType {
 
 function extractTopic(prompt: string): string {
   let topic = prompt.trim();
-  topic = topic.replace(/^(create|make|generate|write|build|produce|olu.tur|yap|yaz|üret|haz.rla)\s+(a|an|the|bir)\s+/gi, '');
+  topic = topic.replace(/^(create|make|generate|write|build|produce|olu\.tur|yap|yaz|üret|haz\.rla)\s+(a|an|the|bir)\s+/gi, '');
   topic = topic.replace(/^(video|film|content|içerik|video)\s+(about|about|hakk.nda|konusunda|konu)\s+/i, '');
   topic = topic.replace(/^(about|hakk.nda|konu)\s+/i, '');
   topic = topic.replace(/\s+(t[uü]rk[ççe]+|ingilizce|english|türkçe)\s+(olsun|olarak)?/gi, '');
@@ -67,7 +67,7 @@ function generateTitle(topic: string, type: VideoType): string {
 function extractTopicFromPrompt(prompt: string): string {
   // Önce mevcut extractTopic fonksiyonunu çalıştır
   let topic = prompt.trim();
-  topic = topic.replace(/^(create|make|generate|write|build|produce|olu.tur|yap|yaz|üret|haz.rla)\\s+(a|an|the|bir)\\s+/gi, '');
+  topic = topic.replace(/^(create|make|generate|write|build|produce|olu\\.tur|yap|yaz|üret|haz\\.rla)\\s+(a|an|the|bir)\\s+/gi, '');
   topic = topic.replace(/^(video|film|content|içerik|video)\\s+(about|about|hakk.nda|konusunda|konu)\\s+/i, '');
   topic = topic.replace(/^(about|hakk.nda|konu)\\s+/i, '');
   topic = topic.replace(/\\s+(t[uü]rk[ççe]+|ingilizce|english|türkçe)\\s+(olsun|olarak)?/gi, '');
@@ -79,8 +79,6 @@ function extractTopicFromPrompt(prompt: string): string {
   return topic || 'bu konu';
 }
 
-function pick<T>(arr: T[]): T { return arr[Math.floor(Math.random() * arr.length)] };
-function capitalize(s: string): string { return s.charAt(0).toUpperCase() + s.slice(1); }
 
 // YENİ: Topic'a göre dinamik senaryo şablonu
 function generateTopicSpecificNarration(topic: string, sceneIndex: number, total: number): string {

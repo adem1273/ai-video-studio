@@ -288,7 +288,7 @@ export function VideoPreview({
     ? progress.phase === 'preparing'
       ? `${Math.round((progress.scene / Math.max(progress.total, 1)) * 40)}%`
       : progress.phase === 'rendering'
-        ? `${40 + Math.round((progress.framesRendered || 0) / Math.max(progress.totalFrames || 1, 1)) * 50)}%`
+        ? `${40 + Math.round((progress.framesRendered || 0) / Math.max(progress.totalFrames || 1, 1)) * 50}%`
         : `${Math.round(90 + transcodeProgress * 10)}%`
     : '0%';
 
