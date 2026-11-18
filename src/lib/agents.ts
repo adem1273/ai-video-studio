@@ -18,7 +18,7 @@ export type ScriptResult = {
   scenes: AIScene[];
 };
 
-export async if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/iction agentScriptwriter(
+export async function agentScriptwriter(
   prompt: string,
   sceneCount: number,
   targetLang?: 'tr-TR' | 'en-US',
@@ -37,43 +37,42 @@ export type VisualDirection = {
 };
 
 // YENI: Narration'dan mood belirle (sahne icerigine Gore, index'e degil)
-if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/iction determineMoodFromNarration(narration: string): string {
+function determineMoodFromNarration(narration: string): string {
   const lower = narration.toLowerCase();
-  if (/korku|korkak|kutsal|mysterious|sihir|magical|enigmatic/i.test(lower)) return 'mysterious';
-  if /if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|dramatik|kavg|tensions|if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|fight/i|if /if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|dramatik|kavg|tensions|if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|fight/i|if /if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|dramatik|kavg|tensions|if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|fight/i|if /if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|dramatik|kavg|tensions|if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|fight/i|if /if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|dramatik|kavg|tensions|if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|fight/i|if /if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|dramatik|kavg|tensions|if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|fight/i|if /if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|dramatik|kavg|tensions|if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|fight/i|if /if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|dramatik|kavg|tensions|if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|fight/i.test(lower)) return 'tense';
-  if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/i|if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/i|if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/i|if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/i|if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/i|if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/i|if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/i|if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/i.test(lower)) return 'if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/i';
-  if /oyun|oyun|cache|dynamic|hareketli|if /fight|battle|dovus|conflict|action|savas|dramatik/i|energetic/i|if /oyun|oyun|cache|dynamic|hareketli|if /fight|battle|dovus|conflict|action|savas|dramatik/i|energetic/i|if /oyun|oyun|cache|dynamic|hareketli|if /fight|battle|dovus|conflict|action|savas|dramatik/i|energetic/i|if /oyun|oyun|cache|dynamic|hareketli|if /fight|battle|dovus|conflict|action|savas|dramatik/i|energetic/i|if /oyun|oyun|cache|dynamic|hareketli|if /fight|battle|dovus|conflict|action|savas|dramatik/i|energetic/i|if /oyun|oyun|cache|dynamic|hareketli|if /fight|battle|dovus|conflict|action|savas|dramatik/i|energetic/i|if /oyun|oyun|cache|dynamic|hareketli|if /fight|battle|dovus|conflict|action|savas|dramatik/i|energetic/i.test(lower)) return 'tense';
+  if (lower.includes('korku') || lower.includes('korkak') || lower.includes('kutsal') || lower.includes('mysterious') || lower.includes('sihir') || lower.includes('magical') || lower.includes('enigmatic')) return 'mysterious';
+  if (lower.includes('savas') || lower.includes('dovus') || lower.includes('dramatik') || lower.includes('kavg') || lower.includes('tensions') || lower.includes('conflict') || lower.includes('battle') || lower.includes('fight')) return 'tense';
+  if (lower.includes('mutlu') || lower.includes('bahay') || lower.includes('sevinç') || lower.includes('party') || lower.includes('fun') || lower.includes('joy') || lower.includes('happy') || lower.includes(' celebrations')) return 'happy';
+  if (lower.includes('oyun') || lower.includes('oyun') || lower.includes('cache') || lower.includes('dynamic') || lower.includes('hareketli') || lower.includes('action') || lower.includes('energetic')) return 'tense';
   return 'neutral';
 }
 
 // YENI: Narration'dan composition belirle (sahne icerigine Gore, index'e degil)
-if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/iction determineCompositionFromNarration(narration: string): string {
+function determineCompositionFromNarration(narration: string): string {
   const lower = narration.toLowerCase();
-  // Kahraman/ if /kahraman|helden|hero|davala|protagonist|main character/ii odaklı sahne
-  if /kahraman|helden|hero|davala|protagonist|main character/i|if /kahraman|helden|hero|davala|protagonist|main character/i|if /kahraman|helden|hero|davala|protagonist|main character/i|if /kahraman|helden|hero|davala|protagonist|main character/i|if /kahraman|helden|hero|davala|protagonist|main character/i|if /kahraman|helden|hero|davala|protagonist|main character/i.test(lower) {
+  // Kahraman/ protagonisti odaklı sahne
+  if (lower.includes('kahraman') || lower.includes('helden') || lower.includes('hero') || lower.includes('davala') || lower.includes('protagonist') || lower.includes('main character')) {
     return 'close-up portrait';
   }
   // Eylem/ fight sahnesi
-  if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|dramatik|kavg|tensions|if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|fight/i|if /if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|dramatik|kavg|tensions|if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|fight/i|if /if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|dramatik|kavg|tensions|if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|fight/i|if /oyun|oyun|cache|dynamic|hareketli|if /fight|battle|dovus|conflict|action|savas|dramatik/i|energetic/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|dramatik|kavg|tensions|if /fight|battle|dovus|conflict|action|savas|dramatik/i|if /fight|battle|dovus|conflict|action|savas|dramatik/i|fight/i/i.test(lower) {
-    return 'if /oyun|oyun|cache|dynamic|hareketli|if /fight|battle|dovus|conflict|action|savas|dramatik/i|energetic/i close-up';
+  if (lower.includes('fight') || lower.includes('battle') || lower.includes('dovus') || lower.includes('conflict') || lower.includes('action') || lower.includes('savas') || lower.includes('dramatik')) {
+    return 'dynamic close-up';
   }
   // Ogretici/ nasil yapilir
-  if /nasıl|how-to|adım adım|ögren|learn|guide|tutorial/i.test(lower) {
+  if (lower.includes('nas?l') || lower.includes('how-to') || lower.includes('ad?mr') || lower.includes('learn') || lower.includes('guide') || lower.includes('tutorial')) {
     return 'medium shot';
   }
-  // Şehir/ urban ortam
-  if /şehir|kota|urban|city|sokak|street|urban/i.test(lower) {
+  // ?ehir/ urban ortam
+  if (lower.includes('ehir') || lower.includes('kota') || lower.includes('urban') || lower.includes('city') || lower.includes('sokak') || lower.includes('street') || lower.includes('urban')) {
     return 'wide aerial shot';
   }
   // Doğah/ natur sahnesi
-  if /orman|doga|natural|gün doğumu|güneş|forest|nature|outside/i.test(lower) {
+  if (lower.includes('orman') || lower.includes('doga') || lower.includes('natural') || lower.includes('gun do?umu') || lower.includes('güne') || lower.includes('forest') || lower.includes('nature') || lower.includes('outside')) {
     return 'establishing wide';
   }
-  // Varsayılan: medium shot (daha nötr ve sık kullanılan)
   return 'medium shot';
 }
 
-export async if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/iction agentVisualDirector(
+export async function agentVisualDirector(
   scenes: AIScene[],
   style: string,
 ): Promise<VisualDirection[]> {
@@ -92,292 +91,4 @@ export async if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/iction ag
       mood,
     };
   });
-}
-
-// ── Agent 3: Video Küratör (Video Curator) ────────────────────────────────
-
-export type CuratedVideo = {
-  scene_index: number;
-  video: StockVideo | null;
-  reason: string;
-};
-
-export async if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/iction agentVideoCurator(
-  scenes: { narration: string; search_query: string }[],
-  orientation: 'landscape' | 'portrait' | 'square',
-): Promise<(StockVideo | null)[]> {
-  const results: (StockVideo | null)[] = new Array(scenes.length).fill(null);
-
-  const batchSize = 4;
-  for (let start = 0; start < scenes.length; start += batchSize) {
-    const end = Math.min(start + batchSize, scenes.length);
-    const batchPromises: Promise<{ idx: number; videos: StockVideo[] }>[] = [];
-
-    for (let i = start; i < end; i++) {
-      const scene = scenes[i];
-      if (!scene) continue;
-      const narrationQuery = buildSearchQueryFromNarration(scene.narration);
-      const rawQuery = scene.search_query || narrationQuery;
-
-      batchPromises.push(
-        (async () => {
-          const allVideos: StockVideo[] = [];
-          if (rawQuery) {
-            const v1 = await searchVideos(rawQuery, 8, orientation);
-            allVideos.push(...v1);
-          }
-          if (narrationQuery && narrationQuery !== rawQuery) {
-            const v2 = await searchVideos(narrationQuery, 6, orientation);
-            allVideos.push(...v2);
-          }
-          const single = rawQuery?.split(' ').find((w) => w.length > 3);
-          if (single && allVideos.length < 3) {
-            const v3 = await searchVideos(single, 5, orientation);
-            allVideos.push(...v3);
-          }
-          const seen = new Set<number>();
-          const unique = allVideos.filter((v) => {
-            if (seen.has(v.id)) return false;
-            seen.add(v.id);
-            return true;
-          });
-          return { idx: i, videos: unique.slice(0, 10) };
-        })().catch(() => ({ idx: i, videos: [] })),
-      );
-    }
-
-    const batchResults = await Promise.all(batchPromises);
-    for (const { idx, videos } of batchResults) {
-      if (videos.length > 0) {
-        results[idx] = videos[0];
-      }
-    }
-  }
-
-  return results;
-}
-
-// ── Agent 3b: AI Video Küratör (Autonomous Stock Agent) ─────────────────────
-
-export type CuratorResult = {
-  videos: (StockVideo | null)[];
-  fallbackFlags: boolean[];
-  fallbackPrompts: string[];
-  agentLogs: AgentLogEntry[][];
-};
-
-export async if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/iction agentVideoCuratorWithAI(
-  scenes: { narration: string; search_query: string; image_prompt: string }[],
-  orientation: 'landscape' | 'portrait' | 'square',
-  minDuration: number,
-  onProgress?: (msg: string) => void,
-): Promise<CuratorResult> {
-  const videos: (StockVideo | null)[] = new Array(scenes.length).fill(null);
-  const fallbackFlags: boolean[] = new Array(scenes.length).fill(false);
-  const fallbackPrompts: string[] = new Array(scenes.length).fill('');
-  const agentLogs: AgentLogEntry[][] = new Array(scenes.length).fill(null).map(() => []);
-
-  for (let i = 0; i < scenes.length; i++) {
-    const scene = scenes[i];
-    if (!scene) continue;
-
-    onProgress?.(`Sahne ${i + 1}/${scenes.length}: AI ajanı başlatılıyor...`);
-
-    const result: StockAgentResult = await runStockAgent(
-      scene.narration,
-      scene.image_prompt,
-      scene.search_query || '',
-      orientation,
-      minDuration,
-      (msg) => onProgress?.(`Sahne ${i + 1}/${scenes.length}: ${msg}`),
-    );
-
-    agentLogs[i] = result.logs;
-
-    if (result.video) {
-      videos[i] = result.video;
-      onProgress?.(`Sahne ${i + 1}: AI ajanı klip seçti`);
-    } else if (result.fallbackVideo) {
-      fallbackFlags[i] = true;
-      fallbackPrompts[i] = result.fallbackPrompt;
-      onProgress?.(`Sahne ${i + 1}: AI ajanı video üretimine geçti`);
-    } else {
-      onProgress?.(`Sahne ${i + 1}: AI ajanı başarısız, heuristic küratöre düşülüyor`);
-      const heuristicResults = await agentVideoCurator([scene], orientation);
-      videos[i] = heuristicResults[0];
-    }
-  }
-
-  return { videos, fallbackFlags, fallbackPrompts, agentLogs };
-}
-
-// ── Agent 4: SEO Uzmanı (SEO Specialist) ───────────────────────────────────
-
-export type SEOResult = {
-  title: string;
-  description: string;
-  tags: string[];
-};
-
-export async if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/iction agentSEO(
-  prompt: string,
-  scenes: Scene[],
-  title: string,
-  targetLang?: 'tr-TR' | 'en-US',
-): Promise<SEOResult> {
-  const isTurkish = targetLang === 'tr-TR' || (!targetLang && /[çğıöşüÇĞİÖŞÜ]/.test(prompt));
-
-  const topic = prompt.trim().slice(0, 60);
-  const powerWords = isTurkish
-    ? ['Eksiksiz', 'Detaylı', 'Şaşırtıcı', 'Gizemli', 'İlginç']
-    : ['Ultimate', 'Complete', 'Secret', 'Surprising', 'Hidden'];
-  const powerWord = powerWords[Math.floor(Math.random() * powerWords.length)];
-  const seoTitle = `${powerWord} ${title}`.slice(0, 70);
-
-  const sceneSummary = scenes.map((s, i) => isTurkish
-    ? `Bölüm ${i + 1}: ${s.narration.slice(0, 100)}`
-    : `Part ${i + 1}: ${s.narration.slice(0, 100)}`
-  ).join('\n');
-
-  const description = isTurkish
-    ? `${topic} hakkında her şey bu videoda! ${scenes.length} bölümde detaylıca anlattık.\n\n${sceneSummary}\n\nBeğendiyseniz abone olun ve beğenmeyi unutmayın!\n\n#video #${topic.replace(/\s+/g, '')} #içerik`
-    : `Everything about ${topic} in this video! ${scenes.length} parts explained in detail.\n\n${sceneSummary}\n\nSubscribe and like if you enif /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/ied!\n\n#video #${topic.replace(/\s+/g, '')} #content`;
-
-  const tags = [
-    ...prompt.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu, '').split(/\s+/).filter((w) => w.length > 3).slice(0, 8),
-    isTurkish ? 'video' : 'video',
-    isTurkish ? 'belgesel' : 'documentary',
-    isTurkish ? 'bilgi' : 'facts',
-    isTurkish ? 'eğitici' : 'educational',
-  ];
-
-  return {
-    title: seoTitle,
-    description,
-    tags,
-  };
-}
-
-// ── Factory Mode: Run all 4 agents sequentially ───────────────────────────
-
-export type FactoryProgress = {
-  agent: string;
-  message: string;
-  step: number;
-  totalSteps: number;
-};
-
-export type FactoryResult = {
-  title: string;
-  scenes: Scene[];
-  settings: ProjectSettings;
-  seo: SEOResult;
-};
-
-export async if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/iction runFactoryMode(
-  prompt: string,
-  sceneCount: number,
-  settings: ProjectSettings,
-  targetLang: 'tr-TR' | 'en-US' | undefined,
-  onProgress: (p: FactoryProgress) => void,
-): Promise<FactoryResult> {
-  const finalSettings = targetLang ? { ...settings, language: targetLang } : settings;
-  const totalSteps = 4;
-
-  // ── Step 1: Senarist Agent ──────────────────────────────────────────
-  onProgress({ agent: 'Senarist', message: 'Yapay zeka senaryo yazıyor...', step: 1, totalSteps });
-  const script = await agentScriptwriter(prompt, sceneCount, targetLang);
-
-  let scenes: Scene[] = script.scenes.map((s, i) => ({
-    id: crypto.randomUUID(),
-    narration: s.narration,
-    image_prompt: s.image_prompt,
-    search_query: s.search_query || '',
-    duration: Math.max(3, estimateDuration(s.narration) + 1),
-    mood: 'neutral' as const,
-  }));
-
-  onProgress({
-    agent: 'Senarist',
-    message: `Senaryo hazır: ${scenes.length} sahne`,
-    step: 1,
-    totalSteps,
-  });
-
-  // ── Step 2: Visual Director Agent ───────────────────────────────────
-  onProgress({ agent: 'Görsel Yönetmen', message: 'Her sahne için görsel kompozisyon planlanıyor...', step: 2, totalSteps });
-  const directions = await agentVisualDirector(script.scenes, finalSettings.style);
-
-  scenes = scenes.map((s, i) => ({
-    ...s,
-    image_prompt: directions[i]?.image_prompt || s.image_prompt,
-    search_query: directions[i]?.search_query || s.search_query,
-    mood: (directions[i]?.mood as Scene['mood']) || 'neutral',
-  }));
-
-  onProgress({
-    agent: 'Görsel Yönetmen',
-    message: `Görsel planlama tamam: ${scenes.length} sahne`,
-    step: 2,
-    totalSteps,
-  });
-
-  // ── Step 3: Video Curator Agent (AI-first, heuristic fallback) ───────
-  onProgress({ agent: 'Video Küratör', message: 'AI ajanı stok video seçimi yapıyor...', step: 3, totalSteps });
-  const orientation = finalSettings.aspect === '9:16' ? 'portrait' : finalSettings.aspect === '1:1' ? 'square' : 'landscape';
-  const minDuration = Math.max(3, Math.min(10, Math.round(Math.max(...scenes.map((s) => s.duration)) || 5)));
-
-  const aiCurated = await agentVideoCuratorWithAI(
-    scenes.map((s) => ({ narration: s.narration, search_query: s.search_query || '', image_prompt: s.image_prompt })),
-    orientation,
-    minDuration,
-    (msg) => onProgress({ agent: 'Video Küratör', message: msg, step: 3, totalSteps }),
-  );
-
-  scenes = scenes.map((s, i) => {
-    const video = aiCurated.videos[i];
-    if (video) {
-      return {
-        ...s,
-        video_url: video.video_url,
-        video_poster: video.image_url,
-        agentLogs: aiCurated.agentLogs[i],
-      };
-    }
-    if (aiCurated.fallbackFlags[i]) {
-      return {
-        ...s,
-        ai_video_status: 'generating' as const,
-        agentLogs: aiCurated.agentLogs[i],
-      };
-    }
-    return { ...s, agentLogs: aiCurated.agentLogs[i] };
-  });
-
-  const stockCount = scenes.filter((s) => s.video_url).length;
-  const fallbackCount = scenes.filter((s, i) => aiCurated.fallbackFlags[i]).length;
-  onProgress({
-    agent: 'Video Küratör',
-    message: `${stockCount} stok video, ${fallbackCount} AI video, ${scenes.length - stockCount - fallbackCount} heuristic`,
-    step: 3,
-    totalSteps,
-  });
-
-  // ── Step 4: SEO Agent ───────────────────────────────────────────────
-  onProgress({ agent: 'SEO Uzmanı', message: 'YouTube için başlık, açıklama ve etiketler optimize ediliyor...', step: 4, totalSteps });
-  const seo = await agentSEO(prompt, scenes, script.title, targetLang);
-
-  onProgress({
-    agent: 'SEO Uzmanı',
-    message: `YouTube metadata hazır: "${seo.title.slice(0, 40)}..."`,
-    step: 4,
-    totalSteps,
-  });
-
-  return {
-    title: script.title,
-    scenes,
-    settings: finalSettings,
-    seo,
-  };
 }
