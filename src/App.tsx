@@ -420,7 +420,13 @@ export default function App() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col lg:flex-row">
+    <ErrorBoundary fallback={
+      <div className="rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-300 flex items-center justify-center">
+        <AlertCircle size={24} className="text-red-400 mb-2"/>
+        <p className="text-sm">Bir hata oluştu, lütfen tekrar deneyin.</p>
+      </div>
+    }
+    >
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div

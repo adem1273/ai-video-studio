@@ -40,7 +40,9 @@ export function VideoPreview({
   const [muted, setMuted] = useState(false);
   const [imageErrors, setImageErrors] = useState<Set<number>>(new Set());
   const [regenerating, setRegenerating] = useState<number | null>(null);
-  const [isFullscreen, setIsFullscreen] = useState(false);
+  const [isFullscreen, setIsFullscreen] = useState(false)
+  const [theme, setTheme] = useState<'light' | 'dark'>('light')
+  const [theme, setTheme] = useState<'light' | 'dark'>('light')
   const [isPlaying, setIsPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [videoDuration, setVideoDuration] = useState(0);
@@ -63,10 +65,22 @@ export function VideoPreview({
   }, []);
 
   const seek = useCallback((delta: number) => {
-    const v = videoRef.current;
-    if (!v) return;
-    v.currentTime = Math.max(0, Math.min(v.duration || 0, v.currentTime + delta));
-  }, []);
+    const v = videoRef.current
+    if (!v) return
+    v.currentTime = Math.max(0, Math.min(v.duration || 0, v.currentTime + delta))
+  }, [])
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowRight') {
+        seek(10)
+      } else if (e.key === 'ArrowLeft') {
+        seek(-10)
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [seek])
 
   const seekTo = useCallback((time: number) => {
     const v = videoRef.current;
@@ -327,14 +341,16 @@ export function VideoPreview({
 
   return (
     <div className="space-y-4">
-      <div ref={containerRef} className="relative rounded-2xl overflow-hidden bg-black aspect-video flex items-center justify-center group">
+      <div ref={containerRef} className="relative rounded-2xl overflow-hidden bg-black aspect-video flex items-center justify-center group" aria-label="Video önizleme" role="region">
         {videoUrl ? (
           <video
             ref={videoRef}
             src={videoUrl}
-            className="w-full h-full object-contain"
+            className="w-full h-full object-contain" aria-label="Video oynatıcı"
             onClick={togglePlay}
+      aria-label="Video oynat/durağı"
             onPlay={() => setIsPlaying(true)}
+      aria-label="Video duraklat"
             onPause={() => setIsPlaying(false)}
             onTimeUpdate={(e) => setCurrentTime(e.currentTarget.currentTime)}
             onLoadedMetadata={(e) => setVideoDuration(e.currentTarget.duration)}
@@ -415,6 +431,7 @@ export function VideoPreview({
             <div className="flex items-center gap-2">
               <button
                 onClick={togglePlay}
+      aria-label="Video oynat/durağı"
                 className="p-1.5 rounded text-white hover:bg-white/10 transition"
                 title={isPlaying ? 'Duraklat' : 'Oynat'}
               >
@@ -647,3 +664,10 @@ export function VideoPreview({
     </div>
   );
 }
+\n  useEffect(() => {
+    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
+    setTheme(prefersDark ? 'dark' : 'light')
+    const mq = window.matchMedia('(prefers-color-scheme: dark)')
+    mq.addEventListener('change', (e) => setTheme(e.matches ? 'dark' : 'light'))
+    return () => mq.removeEventListener('change', (e) => e.matches ? 'dark' : 'light')
+  }, [])

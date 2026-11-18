@@ -1,54 +1,55 @@
-import React from 'react';
+import { Component, ReactNode, useState, useEffect } from 'react'
 
-type ErrorBoundaryProps = {
-  onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
-  fallback?: React.ReactNode;
-};
+interface ErrorBoundaryProps {
+  children: ReactNode
+  fallback?: ReactNode
+  onError?: (error: Error) => void
+}
 
-type ErrorBoundaryState = {
-  hasError: boolean;
-  error?: Error;
-  errorInfo?: React.ErrorInfo;
-};
+interface ErrorBoundaryState {
+  hasError: boolean
+  error: Error | null
+  errorInfo: Error | null
+}
 
-export class ErrorBoundary extends React.Component<ErrorBoundaryProps, ErrorBoundaryState> {
+export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
   constructor(props: ErrorBoundaryProps) {
-    super(props);
-    this.state = { hasError: false, error: undefined, errorInfo: undefined };
+    super(props)
+    this.state = {
+      hasError: false,
+      error: null,
+      errorInfo: null,
+    }
   }
 
-  static getDerivedStateFromError(error: Error) {
-    return { hasError: true, error };
+  static getDerivedStateFromError(error: Error): ErrorBoundaryState {
+    // Update state so the next render will show the fallback
+    return {
+      hasError: true,
+      error,
+    }
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    console.error('Error caught by ErrorBoundary:', error, errorInfo);
+  componentDidCatch(error: Error, errorInfo: Error) {
+    // Log error to console or error reporting service
+    console.error('Error caught by ErrorBoundary:', error, errorInfo)
     if (this.props.onError) {
-      this.props.onError(error, errorInfo);
+      this.props.onError(error)
     }
   }
 
   render() {
     if (this.state.hasError) {
-      const fallbackUI = (
-        <div>
-          <h3 className='text-red-600 mb-2'>Bir hata oluştu</h3>
-          <p className='text-sm text-gray-600'>
-            {this.state.error?.message || 'Bilinmeyen hata'}
-          </p>
-          <button onClick={() => window.location.reload()} className='mt-2 px-4 py-2 bg-blue-500 text-white rounded'>
-            Tekrar Dene
-          </button>
+      return this.props.fallback || (
+        <div className="rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-300">
+          <AlertCircle size={16} className="shrink-0 mt-0.5" />
+          <div>
+            <p className="font-medium">Hata</p>
+            <p className="text-xs mt-1">{this.state.error.message}</p>
+          </div>
         </div>
-      );
-      return (
-        <div style={{padding: '20px', background: '#fef3c7', border: '1px solid #f5dce4', borderRadius: '8px', margin: '16px 0' }}>
-          {fallback || fallbackUI}
-        </div>
-      );
+      )
     }
-    return this.props.children;
+    return this.props.children
   }
 }
-
-export default ErrorBoundary;

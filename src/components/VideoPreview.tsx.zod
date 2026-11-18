@@ -1,0 +1,46 @@
+// Zod schema for VideoPreview props validation
+import z from 'zod';
+
+const VideoPreviewSchema = z.object({
+  scenes: z.array(import('@/lib/types').Scene).nonempty('En az bir sahne gerekli'),
+  settings: z.object({
+    title: z.string().min(1, 'Proje başlığı boş olamaz'),
+    exportFormat: z.enum(['mp4', 'webm']),
+    voice: z.string(),
+    ttsVoice: z.enum(['nova', 'shimmer', 'coral', 'sage', 'echo', 'onyx', 'ash', 'fable', 'verse', 'alloy']),
+    ttsMode: z.enum(['pollinations', 'browser']),
+    rate: z.number().positive('Rate pozitif olmalı'),
+    style: z.string().min(1, 'Style boş olamaz'),
+    aspect: z.enum(['16:9', '9:16', '1:1']),
+    resolution: z.enum(['720p', '1080p', '1440p']),
+    music: z.enum(['cinematic', 'upbeat', 'calm', 'dramatic', 'corporate', 'lofi', 'electronic', 'ambient', 'rock', 'jazz', 'none']),
+    musicVolume: z.number().int().min(0).max(100),
+    language: z.enum(['tr-TR', 'en-US']).optional(),
+    contentLanguage: z.enum(['auto', 'en', 'tr']).optional(),
+    ttsTurkishVoice: z.enum(['Emel', 'Ahmet']).optional(),
+    transition: z.enum(['fade', 'slide', 'zoom', 'none', 'cut', 'crossfade']),
+    showTitleCard: z.boolean(),
+    exportFormat: z.enum(['mp4', 'webm']),
+    mediaSource: z.enum(['auto', 'stock', 'ai', 'ai-video']),
+    subtitleStyle: z.enum(['standard', 'kinetic', 'minimal', 'cinematic', 'karaoke', 'none', 'bold']),
+    subtitleColor: z.enum(['white', 'yellow', 'gold', 'cyan']),
+    endCard: z.object({
+      enabled: z.boolean(),
+      text: z.string().min(1, 'End card text required'),
+      fontColor: z.enum(['gold', 'white', 'cyan']),
+    }),
+    brand: z.object({
+      enabled: z.boolean(),
+      primaryColor: z.string().regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, 'Geçerli renk kodu gerekli'),
+      fontFamily: z.string().optional(),
+      watermarkText: z.string().optional(),
+    }),
+  }),
+  title: z.string().min(1, 'Video başlığı boş olamaz'),
+  onSettingsChange: z.function().args(z.object({})).optional(),
+  onVideoReady: z.function().args(z.string()).optional(),
+  selectedIndex: z.number().int().min(0).optional(),
+  onSelectIndex: z.function().args(z.number()).optional(),
+});
+
+export type VideoPreviewProps = z.infer<typeof VideoPreviewSchema>;
