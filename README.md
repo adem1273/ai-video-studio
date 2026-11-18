@@ -6,7 +6,7 @@ Yapay zeka destekli, tarayıcıda çalışan, tamamen ücretsiz YouTube video ü
 
 Montaj, 4 yapay zeka ajanının sırayla çalıştığı bir **Fabrika Modu** sunar:
 
-1. **Senarist** — Kullanıcının fikrini alır, sahne sahne senaryo yazar. Her sahne için anlatım metni, görsel betimi ve stok video arama terimi üretir.
+1. **Senarist** — Kullanıcının fikrini alır, sahne sahne senaryo yazar. Her sahne için anlatım metni, Görsel betimi ve stok video arama terimi üretir.
 2. **Görsel Yönetmen** — Her sahneyi analiz eder, kompozisyon, ışık ve ruh hali planlar. Görsel betimleri optimize eder.
 3. **Video Küratör** — Pexels ve Pixabay'de her sahne için en uygun telifsiz stok videoları arar, alternatif klipler de bulur.
 4. **SEO Uzmanı** — YouTube için optimize edilmiş başlık, açıklama ve etiketler üretir.
@@ -20,7 +20,6 @@ Ajanlar tamamlandığında, kullanıcı düzenleme ekranında senaryoyu, görsel
 - **AI Görsel Üretimi** — Her sahne için Flux modeliyle yüksek kaliteli görseller
 - **AI Video Üretimi** — Her sahne için hareketli AI video klipleri (Wan, Seedance, Veo modelleri)
 - **Stok Video Entegrasyonu** — Pexels ve Pixabay üzerinden milyonlarca telifsiz stok video
-- **Akıllı Medya Seçimi** — Otomatik (stok öncelikli), Sadece Stok, Sadece AI Görsel veya Sadece AI Video modları
 
 ### Ses ve Müzik
 - **Seslendirme (TTS)** — 10 farklı ses seçeneği (Nova, Shimmer, Echo, Onyx, vs.), Amazon Polly sinematik sesler veya tarayıcı sesi
@@ -52,7 +51,7 @@ Ajanlar tamamlandığında, kullanıcı düzenleme ekranında senaryoyu, görsel
 
 ### Proje Yönetimi
 - **Proje Kütüphanesi** — Tüm projeler tek ekranda, arama ve filtreleme
-- **Otomatik Kaydetme** — Düzenlemeler otomatik kaydedilir (hem yerel hem bulut)
+- **Otomatik Kaydetme** — Düzenlemeler otomatik kaydedir (hem yerel hem bulut)
 - **Toplu Dışa Aktarım** — Birden fazla projeyi sırayla render etme
 - **Medya Yöneticisi** — Video, görsel ve ses dosyalarını yükleme ve yönetme
 - **Kontrol Paneli** — İstatistikler ve son projeler genel görünümü
@@ -61,56 +60,37 @@ Ajanlar tamamlandığında, kullanıcı düzenleme ekranında senaryoyu, görsel
 ## Teknoloji Mimarisi
 
 ### Frontend
-- **React 18** + **TypeScript** — Tip güvenli UI bileşenleri
-- **Vite** — Hızlı geliştirme ve build aracı
-- **Tailwind CSS** — Utility-first stil sistemi
-- **lucide-react** — İkon kütüphanesi
-- **@dnd-kit** — Sürükle-bırak sahne zaman çizelgesi
-
-### Veri Saklama
-- **Supabase (PostgreSQL)** — Bulut tabanlı proje saklama (RLS korumalı)
-- **Dexie (IndexedDB)** — Tarayıcıda yerel otomatik kaydetme
-- Çift katmanlı: Yerel IndexedDB anlık kayıt + Supabase bulut senkronizasyonu
-
-### Yapay Zeka Servisleri
-- **Pollinations.ai** — Ücretsiz metin, görsel, video ve ses üretimi (API anahtarı gerektirmez)
-  - Metin API: Senaryo üretimi (OpenAI uyumlu endpoint)
-  - Görsel API: Flux modeliyle sahne görselleri
-  - Video API: Wan, Seedance, Veo modelleriyle hareketli video klipleri
-  - Ses API: Amazon Polly sinematik seslendirme
-
-### Stok Medya
-- **Pexels API** — Telifsiz stok videolar (Supabase Edge Function ile proxylenir)
-- **Pixabay API** — Alternatif telifsiz stok video kaynağı
-- API anahtarları sunucu tarafında güvenli şekilde saklanır
-
-### Video İşleme
-- **Canvas API + MediaRecorder** — Tarayıcıda gerçek zamanlı video render
-- **Web Audio API** — Ses miksajı, müzik ducking, seslendirme birleştirme
-- **FFmpeg.wasm** — WebM'den MP4'e dönüştürme (tarayıcıda)
+- React + TypeScript — Modern UI bileşenleri
+- Vite — Hızlı geliştirme sunucusu ve build
+- Tailwind CSS — Responsiv tasarım
+- Lucide React — İkon seti
+- Canvas API — Tarayıcı içi video render
+- MediaRecorder — WebM encode
+- FFmpeg.wasm — WebM'den MP4'e dönüştürme (tarayıcıda)
+- Web Audio API — Ses miksajı, müzik ducking, seslendirme birleştirme
 
 ### Backend
-- **Supabase Edge Functions (Deno)** — Pexels ve Pixabay API proxy'leri
-- **Supabase PostgreSQL** — Proje veritabanı (RLS ile güvenli)
+- Supabase Edge Functions (Deno) — Pexels ve Pixabay API proxy'leri
+- Supabase PostgreSQL — Proje veritabanı (RLS ile güvenli)
 
 ## Proje Yapısı
 
-```
+```text
 src/
 ├── App.tsx                    # Ana uygulama, sekme yönlendirme
 ├── components/
 │   ├── Dashboard.tsx          # Kontrol paneli ve istatistikler
 │   ├── PromptInput.tsx        # Senaryo oluşturma ekranı
-│   ├── FactoryMode.tsx         # 4 ajanlı Fabrika Modu
+│   ├── FactoryMode.tsx        # 4 ajanlı Fabrika Modu
 │   ├── ScriptEditor.tsx       # Sahne düzenleme
-│   ├── SceneTimeline.tsx       # Sürükle-bırak sahne zaman çizelgesi
-│   ├── VideoPreview.tsx        # Video önizleme ve render
-│   ├── ThumbnailGenerator.tsx  # AI thumbnail üretimi
-│   ├── YouTubeMetaPanel.tsx    # YouTube SEO ve yükleme
-│   ├── SettingsPanel.tsx       # Video ayarları
-│   ├── BatchExport.tsx         # Toplu dışa aktarım
-│   ├── MediaManager.tsx        # Medya dosya yöneticisi
-│   └── ProjectLibrary.tsx      # Proje kütüphanesi
+│   ├── SceneTimeline.tsx      # Sürükle-bırak sahne zaman çizelgesi
+│   ├── VideoPreview.tsx       # Video önizleme ve render
+│   ├── ThumbnailGenerator.tsx # AI thumbnail üretimi
+│   ├── YouTubeMetaPanel.tsx   # YouTube SEO ve yükleme
+│   ├── SettingsPanel.tsx      # Video ayarları
+│   ├── BatchExport.tsx        # Toplu dışa aktarım
+│   ├── MediaManager.tsx       # Medya dosya yöneticisi
+│   └── ProjectLibrary.tsx     # Proje kütüphanesi
 ├── lib/
 │   ├── agents.ts              # 4 AI ajanı (Senarist, Görsel, Video, SEO)
 │   ├── pollinations.ts        # AI metin/görsel/video/ses API'leri
@@ -128,12 +108,11 @@ src/
 │   ├── visualContext.ts       # Görsel bağlam analizi
 │   ├── mediaStore.ts          # IndexedDB medya saklama
 │   ├── projectStore.ts        # Yerel proje saklama
-│   ├── supabase.ts            # Supabase istemcisi
 │   └── types.ts               # TypeScript tip tanımları
-supabase/
-├── functions/
-│   ├── pexels-videos/         # Pexels API proxy
-│   └── pixabay-videos/        # Pixabay API proxy
+├── supabase/
+│   └── functions/
+│       ├── pexels-videos/     # Pexels API proxy
+│       └── pixabay-videos/    # Pixabay API proxy
 └── migrations/
     ├── create_video_projects.sql  # Proje tablosu
     └── add_youtube_metadata.sql   # YouTube metadata kolonları
