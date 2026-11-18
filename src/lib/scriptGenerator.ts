@@ -56,7 +56,54 @@ function generateTitle(topic: string, type: VideoType): string {
     generic: [`${t}`, `${t}: Bir Video`, `${t} Hakkında`],
   };
   const opts = titles[type];
+  // Eğer topic çok kisayse veya boşsa, daha açıklayıcı bir başlık üret
+  if (!t || t.length < 3) {
+    return `${t} hakkında bilgi`; // fallback
+  }
   return opts[Math.floor(Math.random() * opts.length)];
+}
+
+// YENİ: Prompt içeriğine göre konu çıkar ve title üret
+function extractTopicFromPrompt(prompt: string): string {
+  // Önce mevcut extractTopic fonksiyonunu çalıştır
+  let topic = prompt.trim();
+  topic = topic.replace(/^(create|make|generate|write|build|produce|olu.tur|yap|yaz|üret|haz.rla)\\s+(a|an|the|bir)\\s+/gi, '');
+  topic = topic.replace(/^(video|film|content|içerik|video)\\s+(about|about|hakk.nda|konusunda|konu)\\s+/i, '');
+  topic = topic.replace(/^(about|hakk.nda|konu)\\s+/i, '');
+  topic = topic.replace(/\\s+(t[uü]rk[ççe]+|ingilizce|english|türkçe)\\s+(olsun|olarak)?/gi, '');
+  topic = topic.replace(/\\s+olsun$/gi, '');
+  topic = topic.replace(/\\b(script|senaryo|video|film|content|içerik|kısa|short|uzun|long)\\b/gi, '');
+  topic = topic.replace(/^(bir|a|an|the)\\s+/i, '');
+  topic = topic.trim();
+  if (topic.length > 80) topic = topic.slice(0, 77) + '...';
+  return topic || 'bu konu';
+}
+
+function pick<T>(arr: T[]): T { return arr[Math.floor(Math.random() * arr.length)] };
+function capitalize(s: string): string { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+// YENİ: Topic'a göre dinamik senaryo şablonu
+function generateTopicSpecificNarration(topic: string, sceneIndex: number, total: number): string {
+  const topicClean = extractTopicFromPrompt(topic).replace(/^\w+\s+/, '');
+  if (!topicClean) return 'Konu belirtilmemiş';
+
+  // Index bazlı ama topic odaklı şablonlar - her senaryo farklı açıdan ele alınır
+  const templates = [
+    // Sahne 1: Giriş - konunun önemi ve tanımı
+    `Bu videoda ${topicClean} hakkında bilmeniz gereken en önemli şeyler var.`,
+    // Sahne 2: Temel kavram - konunun heart'i
+    `${topicClean}ın temel prensibi şöyledir: `,
+    // Sahne 3: Uygulama/ örnek - konunun canlandığı yer
+    `${topicClean} gerçeğindeki en ilginç örneklerden biri...`,
+    // Sahne 4 (varsa): Derinleme - konunun daha detaylı yönleri
+    `${topicClean} hakkında bilmediğiniz şeyler...`,
+    // Son sahne: Sonuç/ çağrı - dinleyiciye ne yapmasını söyle
+    `Bu bilgilerle ${topicClean} hakkında daha bilinçli bir karar verebilirsiniz.`
+  ];
+
+  // Toplam sahne sayısından fazla istenmişse, kalanları döngüyle döngüye gönder
+  const templateIndex = sceneIndex % templates.length;
+  return templates[templateIndex];
 }
 
 type NarrationFn = (topic: string, i: number, total: number) => string;

@@ -36,22 +36,54 @@ export type VisualDirection = {
   mood: string;
 };
 
+// YENI: Narration'dan mood belirle (sahne icerigine Gore, index'e degil)
+function determineMoodFromNarration(narration: string): string {
+  const lower = narration.toLowerCase();
+  if (/korku|korkak|kutsal|mysterious|sihir|magical|enigmatic/i.test(lower)) return 'mysterious';
+  if /savas|dovus|dramatik|kavg|tensions|conflict|battle|fight/i.test(lower)) return 'tense';
+  if /mutlu|bahay|sevinç|party|fun|joy|happy| celebrations/i.test(lower)) return 'happy';
+  if /oyun|oyun|cache|dynamic|hareketli|action|energetic/i.test(lower)) return 'tense';
+  return 'neutral';
+}
+
+// YENI: Narration'dan composition belirle (sahne icerigine Gore, index'e degil)
+function determineCompositionFromNarration(narration: string): string {
+  const lower = narration.toLowerCase();
+  // Kahraman/ protagonisti odaklı sahne
+  if /kahraman|helden|hero|davala|protagonist|main character/i.test(lower) {
+    return 'close-up portrait';
+  }
+  // Eylem/ fight sahnesi
+  if /fight|battle|dovus|conflict|action|savas|dramatik/i.test(lower) {
+    return 'dynamic close-up';
+  }
+  // Ogretici/ nasil yapilir
+  if /nasıl|how-to|adım adım|ögren|learn|guide|tutorial/i.test(lower) {
+    return 'medium shot';
+  }
+  // Şehir/ urban ortam
+  if /şehir|kota|urban|city|sokak|street|urban/i.test(lower) {
+    return 'wide aerial shot';
+  }
+  // Doğah/ natur sahnesi
+  if /orman|doga|natural|gün doğumu|güneş|forest|nature|outside/i.test(lower) {
+    return 'establishing wide';
+  }
+  // Varsayılan: medium shot (daha nötr ve sık kullanılan)
+  return 'medium shot';
+}
+
 export async function agentVisualDirector(
   scenes: AIScene[],
   style: string,
 ): Promise<VisualDirection[]> {
-  const moods = ['calm', 'dramatic', 'tense', 'happy', 'mysterious', 'neutral'] as const;
-  const compositions = [
-    'wide aerial shot', 'close-up portrait', 'overhead flat lay',
-    'medium shot', 'tracking shot', 'establishing wide',
-    'macro close-up', 'low angle shot',
-  ];
-
   return scenes.map((s, i) => {
+    // Önce visual keywords'leri çıkar (arama için)
     const keywords = extractVisualKeywords(s.narration);
     const searchQuery = keywords.slice(0, 3).join(' ');
-    const mood = moods[i % moods.length];
-    const composition = compositions[i % compositions.length];
+    // İçeriğe göre mood ve composition belirle (index'e bağlı DEĞİL)
+    const mood = determineMoodFromNarration(s.narration);
+    const composition = determineCompositionFromNarration(s.narration);
     const imagePrompt = `${s.image_prompt}, ${composition}, ${style} style`;
     return {
       image_prompt: imagePrompt,

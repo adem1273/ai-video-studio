@@ -2,6 +2,43 @@ const STOPWORDS_EN = new Set(['the','a','an','is','are','was','were','be','been'
 
 const STOPWORDS_TR = new Set(['ve','veya','ile','için','göre','kadar','daha','en','çok','az','bir','iki','üç','bu','şu','o','şey','sey','ne','nasil','neden','niçin','niye','hangi','kim','kime','nerede','nereden','nereye','her','tüm','butun','bazi','biraz','birçok','pek','hem','ya','de','da','ki','mi','mı','mu','mü','ise','idi','olur','olmus','olan','olarak','bize','size','ona','buna','suna','ben','sen','biz','siz','onlar','benim','senin','bizim','sizin','onlarin','onun','bunun','sunun','var','yok','iyi','kötü','büyük','küçük','yeni','eski','uzun','kisa','yüksek','alçak','derin','genis','dar','kalın','ince','zaman','yil','gün','saat','dakika','saniye','defa','kez','sira','sonra','önce','şimdi','son','ilk','gibi','herhangi','yani','iste','cünkü','madem','eger','yapmak','yapti','yapiyor','olmak','oldu','oluyor','gelmek','geldi','geliyor','gitmek','gitti','gidiyor','görmek','gördü','bilmek','bildi','demek','dedi','vermek','verdi','almak','aldi','koymak','koydu','söylemek','söyledi','anlatmak','anlatti']);
 
+// VISUAL_KEYWORDS SETINE TÜRKCE VE ALTVİZYON EKLEMELERİ
+// Daha geniş bir görsel kavram kümesi: nesneler, ortamlar, durumlar, zamanlar, ışık koşulları
+const VISUAL_KEYWORDS = new Set([
+  // === ZATEN VISUAL OBJECTS (Nesneler) ===
+  'mountain', 'ocean', 'sea', 'river', 'forest', 'tree', 'sky', 'cloud', 'sun', 'moon', 'star',
+  'fire', 'water', 'snow', 'rain', 'storm', 'city', 'building', 'street', 'road', 'bridge',
+  'tower', 'castle', 'house', 'home', 'room', 'office', 'studio', 'lab', 'factory',
+  'car', 'truck', 'train', 'plane', 'ship', 'boat', 'bike', 'phone', 'computer', 'screen',
+  'camera', 'book', 'desk', 'table', 'chair', 'window', 'door', 'clock', 'map', 'key',
+  'tool', 'machine', 'money', 'coin', 'gold', 'diamond', 'crystal', 'glass', 'metal', 'stone',
+  'rock', 'sand', 'dust', 'ice', 'steam',
+  
+  // === TÜRKÇE GÖRSEL KAVRAMLAR ===
+  'güneş', 'ay', 'yıldız', 'bulut', 'kar', 'yağmur', 'fırtına', 'orman', 'ağaç',
+  'deniz', 'nehir', 'dağ', 'lava', 'ateş', 'buhur', 'gül', 'bahçe', 'tarla',
+  'hayvan', 'kuş', 'at', 'köpek', 'kedi', 'aslan', 'kaplan', 'ayi', 'yüz',
+  'el', 'göz', 'kalp', 'savaş', 'mücadele', 'yarış', 'oyun', 'spor',
+  
+  // === ABSTRACT/ DURUM KAVRAMLAR ===
+  'mutlu', 'sad', 'korku', 'umut', 'sihir', 'gizem', 'dramatik', 'calm',
+  'dynamic', 'statık', 'renk', 'gölge', 'ışık', 'karanlık', 'early morning',
+  'late afternoon', 'night', 'dawn', 'dusk', 'twilight',
+  
+  // === ZAMAN VE TEKERLEMİ ===
+  'zaman', 'yıl', 'gün', 'saat', 'dakika', 'saniye', 'defa', 'kez', 'sira', 'sonra', 'önce',
+  'şimdi', 'ilk', 'son', 'gibi',
+  
+  // === IŞIK ve ATMOSFER ===
+  'güneş ışığı', 'ay ışığı', 'gölge', 'parlamalık', 'dim', 'bright', 'dark',
+  'early morning light', 'golden hour', 'sunset', 'sunrise', 'backlight', 'rim light',
+  'soft light', 'diffused light', 'contrast', 'high contrast', 'low key', 'high key',
+  
+  // === KONUÇ/ ENDİNG ===
+  'finish', 'ending', 'conclusion', 'complete', 'balanced', 'lineup', 'collage',
+  'highlights', 'layout', 'montage', 'sequence'
+]);
+
 const VISUAL_KEYWORDS = new Set(['mountain','ocean','sea','river','forest','tree','sky','cloud','sun','moon','star','fire','water','snow','rain','storm','city','building','street','road','bridge','tower','castle','house','home','room','office','studio','lab','factory','car','truck','train','plane','ship','boat','bike','phone','computer','screen','camera','book','desk','table','chair','window','door','clock','map','key','tool','machine','money','coin','gold','diamond','crystal','glass','metal','stone','rock','sand','dust','ice','steam','light','shadow','flower','garden','field','farm','animal','bird','fish','horse','dog','cat','lion','tiger','bear','wolf','eagle','snake','butterfly','bee','leaf','grass','mushroom','person','man','woman','child','baby','people','crowd','soldier','warrior','king','queen','knight','farmer','scientist','doctor','teacher','artist','musician','dancer','astronaut','pilot','driver','worker','chef','hunter','face','hand','eye','heart','brain','battle','war','fight','race','game','sport','dance','music','concert','festival','wedding','funeral','party','meeting','speech','lecture','experiment','discovery','journey','adventure','exploration','escape','arrival','sunrise','sunset','night','dawn','dusk','twilight','winter','summer','spring','autumn','desert','jungle','space','galaxy','planet','earth','mars','dag','deniz','nehir','orman','ağaç','gökyüzü','bulut','güneş','ay','yildiz','ateş','su','kar','yağmur','firtina','şehir','bina','sokak','yol','köprü','kule','saray','ev','oda','ofis','araba','tren','uçak','gemil','tekne','telefon','bilgisayar','ekran','kamera','kitap','masa','para','altin','çiçek','bahçe','tarla','hayvan','kuş','balik','at','köpek','kedi','aslan','kaplan','ayi','yüz','el','göz','kalp','savas','mücadele','yaris','oyun','spor','müzik','konser','festival','dügün','gece','sabah','akşam','kis','yaz','ilkbahar','sonbahar','çöl','uzay','gezegen','dünya']);
 
 function normalize(text: string): string {
@@ -25,10 +62,15 @@ export function extractVisualKeywords(narration: string, maxKeywords: number = 5
     if (seen.has(word)) continue;
     seen.add(word);
     let score = 0;
-    if (VISUAL_KEYWORDS.has(word)) score += 10;
+    // Genişletilmiş dictionary'te mı kontrol et (puan artırıldı)
+    if (VISUAL_KEYWORDS.has(word)) score += 12;
+    // Stopword'leri cezalandır
     if (!STOPWORDS_EN.has(word) && !STOPWORDS_TR.has(token)) score += 3;
+    // Uzun kelimeler daha anlamlı olabilir
     if (word.length > 5) score += 2;
     if (word.length > 7) score += 1;
+    // TR kelimesi ve EN set'inde yoksa ek puan
+    if (!STOPWORDS_TR.has(token) && !STOPWORDS_EN.has(word)) score += 1;
     if (score > 0) scored.push({ word, score });
   }
   scored.sort((a, b) => b.score - a.score);
@@ -52,10 +94,30 @@ export function extractSearchQuery(imagePrompt: string): string {
   return query || imagePrompt.slice(0, 50);
 }
 
-export function buildSearchQueryFromNarration(narration: string): string {
-  const keywords = extractVisualKeywords(narration, 4);
-  const query = keywords.join(' ');
-  if (query.length > 60) return query.slice(0, 57) + '...';
+// YENİ: Videotype bazlı arama sorgusu oluştur
+export function buildSearchQueryFromNarration(narration: string, videoType: 'story' | 'tutorial' | 'vlog' = 'story'): string {
+  const keywords = extractVisualKeywords(narration, 6); // 6 keyword al (artı 2)
+
+  // Video türüne göre ek modüller/adjusted query
+  const typeModifiers = {
+    tutorial: ['tutorial', 'how-to', 'step by step', 'guide', 'instruction'],
+    story: ['story', 'tale', 'journey', 'adventure', 'narrative'],
+    vlog: ['vlog', 'daily', 'experience', 'walkthrough', 'first-person']
+  };
+
+  const modifiers = typeModifiers[videoType] || typeModifiers.story;
+  // En önemli 2 modülü ekle
+  const relevantModifiers = modifiers.slice(0, 2);
+
+  // Keyword'ler ve modüllerı birleştir
+  const allTerms = [...keywords, ...relevantModifiers];
+  const query = allTerms.join(' ');
+
+  // Maksimum 60 karakter, dil uygunluğu
+  if (query.length > 60) {
+    // Karakter sayısını kesa sıra kesip sonuna '...' ekle
+    return query.slice(0, 57) + '...';
+  }
   return query || narration.slice(0, 50);
 }
 
