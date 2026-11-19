@@ -341,12 +341,12 @@ export function VideoPreview({
 
   return (
     <div className="space-y-4">
-      <div ref={containerRef} className="relative rounded-2xl overflow-hidden bg-black aspect-video flex items-center justify-center group" aria-label="Video önizleme" role="region">
+      <div ref={containerRef} className="relative rounded-2xl overflow-hidden bg-black aspect-video flex items-center justify-center group hover:bg-black/95 transition-colors" aria-label="Video önizleme" role="region">
         {videoUrl ? (
           <video
             ref={videoRef}
             src={videoUrl}
-            className="w-full h-full object-contain" aria-label="Video oynatıcı"
+            className="w-full h-full object-contain transition-opacity duration-300" aria-label="Video oynatıcı"
             onClick={togglePlay}
       aria-label="Video oynat/durağı"
             onPlay={() => setIsPlaying(true)}
