@@ -664,7 +664,7 @@ export function VideoPreview({
     </div>
   );
 }
-\n  useEffect(() => {
+ useEffect(() => {
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches
     setTheme(prefersDark ? 'dark' : 'light')
     const mq = window.matchMedia('(prefers-color-scheme: dark)')
