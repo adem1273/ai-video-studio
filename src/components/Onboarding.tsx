@@ -169,7 +169,7 @@ const Onboarding: React.FC = () => {
 
 function getOnboardingText(step: number): string {
   const texts = [
-    'Sohbetimsen'e hoş geldiniz! Videoluşturma sürecine başlıyoruz.',
+    "Sohbetimsen'e hoş geldiniz! Videoluşturma sürecine başlıyoruz.",
     'Fikirlerinizi yazın veya "Fabrika" modunda 4 AI ajanı birden çalıştırın.',
     'Ses, müzik, format, çözünürlük ve marka ayarlarını yapılandırın.',
     'Tebrikler! Artık videonuzu önizleyip render edebilirsiniz.'
