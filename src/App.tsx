@@ -426,7 +426,6 @@ export default function App() {
         <p className="text-sm">Bir hata oluştu, lütfen tekrar deneyin.</p>
       </div>
     }
-    >
       {/* Mobile overlay */}
       {sidebarOpen && (
         <div

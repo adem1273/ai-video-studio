@@ -112,6 +112,26 @@ const Onboarding: React.FC = () => {
               <p className="text-slate-400 text-sm">
                 Tebrikler! Artık videonuzu önizleyip render edebilirsiniz. "Video" sekmesinde sesli önizleme yapın veya bir tıkla videoyu render edin.
               </p>
+              <div className="mt-4">
+                <label className="flex items-center gap-2">
+                  <input
+                    type="checkbox"
+                    checked={localStorage.getItem('onboardingSkip') === 'true'}
+                    onChange={(e) => {
+                      if (e.target.checked) {
+                        localStorage.setItem('onboardingSkip', 'true')
+                      } else {
+                        localStorage.removeItem('onboardingSkip')
+                      }
+                      completeOnboarding()
+                    }}
+                    className="rounded bg-slate-700 border border-slate-600 w-4 h-4 focus:ring-slate-400"
+                  />
+                  <span className="text-slate-300 text-sm never-show">
+                    Daha gösterme
+                  </span>
+                </label>
+              </div>
             </div>
           )}
         </div>
